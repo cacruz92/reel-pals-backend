@@ -3,6 +3,8 @@
 const express = require("express");
 const {BadRequestError} = require("../expressError");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const {JWT_SECRET} = require("../config");
 
 const router = express.Router();
 
@@ -19,7 +21,8 @@ router.post('/register', async (req, res, next) => {
     try{
         const {username, password, firstName, lastName, birthday, email} = req.body;
         const user = await User.register({username, password, firstName, lastName, birthday, email});
-        return res.status(201).json({user})
+        const token = User.generateToken(user);
+        return res.status(201).json({user, token})
     } catch(e){
         return next(e);
     }
@@ -38,7 +41,8 @@ router.post('/login', async (req, res, next) => {
     try{
         const {username, password} = req.body;
         const user = await User.authenticate(username, password);
-        return res.json({user})
+        const token = User.generateToken(user);
+        return res.json({user, token})
     } catch(e){
         console.error("Login error:", e);
         return next(e);

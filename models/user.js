@@ -1,4 +1,7 @@
 const db = require("../db");
+const bcrypt = require("bcrypt");
+const {BCRYPT_WORK_FACTOR, JWT_SECRET} = require("../config");
+const jwt = require("jsonwebtoken");
 const {
     NotFoundError, 
     BadRequestError, 
@@ -28,7 +31,8 @@ class User {
         const user = result.rows[0];
 
         if (user) {
-            if(user.hashed_password === password){
+            const isValid = await bcrypt.compare(password, user.hashed_password)
+            if(isValid){
                 delete user.hashed_password;
                 return user;
             }
@@ -57,6 +61,8 @@ class User {
             throw new BadRequestError("That username already exists!")
         } 
 
+        const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR)
+
         const result = await db.query(
             `INSERT INTO users
             (username,
@@ -69,7 +75,7 @@ class User {
             RETURNING username, email, first_name AS "firstName", last_name AS "lastName", birthday`,
             [
                 username, 
-                password, 
+                hashedPassword, 
                 email, 
                 firstName, 
                 lastName, 
@@ -79,6 +85,14 @@ class User {
 
         const user = result.rows[0];
         return user;
+    }
+
+    static generateToken(user){
+        const payload = {
+            username: user.username,
+            email: user.email
+        };
+        return jwt.sign(payload, JWT_SECRET, {expiresIn: '24h'})
     }
 
     /** find a user by the username given

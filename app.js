@@ -3,12 +3,14 @@ const cors = require("cors");
 const morgan = require("morgan");
 const {NotFoundError} = require("./expressError")
 const userRoutes = require('./routes/users');
+const { authenticateJWT } = require("./middleware/auth");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(morgan("tiny"))
+app.use(morgan("tiny"));
+app.use(authenticateJWT);
 
 app.use('/users', userRoutes);
 
