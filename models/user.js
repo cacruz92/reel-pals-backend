@@ -12,7 +12,8 @@ class User {
     **/
 
     static async authenticate(username, password){
-        const result = await db.query(
+        try {
+            const result = await db.query(
             `SELECT username,
                     hashed_password,
                     email, 
@@ -25,19 +26,18 @@ class User {
         );
         
         const user = result.rows[0];
-        console.log("User from database:", user);
 
         if (user) {
-            console.log("Comparing passwords:", { 
-                inputPassword: password, 
-                storedPassword: user.hashed_password 
-            });
             if(user.hashed_password === password){
                 delete user.hashed_password;
                 return user;
             }
         }
         throw new UnauthorizedError("Invalid username/password")
+    }catch(e){
+        console.error("Database error:", e);
+        throw new UnauthorizedError("Login Failed")
+    }
     }
 
     /** register user with data

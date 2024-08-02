@@ -1,7 +1,7 @@
 // Database setup for Reel Pals
 
 const { Client } = require("pg");
-const { getDatabaseUri } = require("./config")
+const { getDatabaseUri } = require("./config");
 
 let db = new Client({
   connectionString: getDatabaseUri()

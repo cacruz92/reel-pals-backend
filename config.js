@@ -16,8 +16,8 @@ console.log("---");
 
 function getDatabaseUri(){
     return (process.env.NODE_ENV === "test")
-    ? "reel_pals_test"
-    : process.env.DATABASE_URL || "postgres://localhost:5432/reel_pals";
+    ? "postgresql:///reel_pals_test"
+    : process.env.DATABASE_URL || "postgresql:///reel_pals";
 }
 
 module.exports = {
