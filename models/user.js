@@ -2,6 +2,7 @@ const db = require("../db");
 const bcrypt = require("bcrypt");
 const {BCRYPT_WORK_FACTOR, JWT_SECRET} = require("../config");
 const jwt = require("jsonwebtoken");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 const {
     NotFoundError, 
     BadRequestError, 
@@ -117,7 +118,71 @@ class User {
         if(!user){
             throw new NotFoundError(`No user: ${username}`)
         }
+        return user;
     }
+
+    /** Delete given user from database; returns undefined. */
+
+    static async remove(username) {
+        let result = await db.query(
+            `DELETE
+            FROM users
+            WHERE username = $1
+            RETURNING username`,
+            [username],
+        );
+        const user = result.rows[0];
+
+        if (!user) throw new NotFoundError(`No user: ${username}`);
+
+        return user; 
+    }
+
+    /** Update user data with `data`.
+     *
+     * This is a "partial update" --- it's fine if data doesn't contain
+     * all the fields; this only changes provided ones.
+     *
+     * Data can include:
+     *   { password, email, firstName, lastName, birthday }
+     *
+     * Returns { username, email, firstName, lastName, birthday }
+     *
+     * Throws NotFoundError if not found.
+     *
+     * WARNING: this function can set a new password.
+     * Callers of this function must be certain they have validated inputs to this
+     * or serious security risks can be opened.
+     */
+    static async update(username, data) {
+        if (data.password) {
+          data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
+        }
+    
+        const { setCols, values } = sqlForPartialUpdate(
+            data,
+            {
+              firstName: "first_name",
+              lastName: "last_name"
+            });
+        const usernameVarIdx = "$" + (values.length + 1);
+    
+        const querySql = `UPDATE users 
+                          SET ${setCols} 
+                          WHERE username = ${usernameVarIdx} 
+                          RETURNING username,
+                                    first_name AS "firstName",
+                                    last_name AS "lastName",
+                                    email,
+                                    birthday`;
+        const result = await db.query(querySql, [...values, username]);
+        const user = result.rows[0];
+    
+        if (!user) throw new NotFoundError(`No user: ${username}`);
+    
+        delete user.password;
+        return user;
+      }
 }
 
 module.exports = User;

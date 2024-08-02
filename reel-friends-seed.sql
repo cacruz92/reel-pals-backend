@@ -34,7 +34,6 @@ CREATE TABLE reviews (
     body TEXT,
     user_id INTEGER REFERENCES users(id),
     movie_id INTEGER REFERENCES movies(id),
-    status VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
