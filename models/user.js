@@ -14,7 +14,7 @@ class User {
     static async authenticate(username, password){
         const result = await db.query(
             `SELECT username,
-                    password,
+                    hashed_password,
                     email, 
                     first_name AS "firstName", 
                     last_name AS "lastName",
@@ -25,10 +25,15 @@ class User {
         );
         
         const user = result.rows[0];
+        console.log("User from database:", user);
 
         if (user) {
-            if(user.password === password){
-                delete user.password;
+            console.log("Comparing passwords:", { 
+                inputPassword: password, 
+                storedPassword: user.hashed_password 
+            });
+            if(user.hashed_password === password){
+                delete user.hashed_password;
                 return user;
             }
         }
@@ -55,13 +60,13 @@ class User {
         const result = await db.query(
             `INSERT INTO users
             (username,
-            password,
+            hashed_password,
             email,
             first_name,
             last_name,
             birthday)
             VALUES ($1, $2, $3, $4, $5, $6 )
-            RETURNING username, email, first_name AS "firstName", last_name AS "lastName, birthday`,
+            RETURNING username, email, first_name AS "firstName", last_name AS "lastName", birthday`,
             [
                 username, 
                 password, 
@@ -100,3 +105,5 @@ class User {
         }
     }
 }
+
+module.exports = User;

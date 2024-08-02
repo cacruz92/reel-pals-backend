@@ -17,8 +17,8 @@ const router = express.Router();
 
 router.post('/register', async (req, res, next) => {
     try{
-        const {username, password, firstName, lastName, birthday} = req.body;
-        const user = await User.register({username, password, firstName, lastName, birthday});
+        const {username, password, firstName, lastName, birthday, email} = req.body;
+        const user = await User.register({username, password, firstName, lastName, birthday, email});
         return res.status(201).json({user})
     } catch(e){
         return next(e);
@@ -37,9 +37,11 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
     try{
         const {username, password} = req.body;
+        console.log("Login attempt:", { username, password });
         const user = await User.authenticate({username, password});
         return res.json({user})
     } catch(e){
+        console.error("Login error:", e);
         return next(e);
     }
 });
@@ -53,7 +55,7 @@ router.post('/login', async (req, res, next) => {
  * Authorization required: friend or same user-as-:username
  **/
 
-router.post('/:username', async (req, res, next) => {
+router.get('/:username', async (req, res, next) => {
     try{
         const username = req.params.username;
         const user = await User.get(username);
