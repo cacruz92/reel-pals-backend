@@ -47,7 +47,7 @@ class Comment{
     
         const querySql = `UPDATE comments 
                           SET ${setCols} 
-                          WHERE username = ${commentVarIdx} 
+                          WHERE id = ${commentVarIdx} 
                           RETURNING user_id AS "userId", review_id AS "reviewId", body`;
         const result = await db.query(querySql, [...values, commentId]);
         const comment = result.rows[0];

@@ -14,7 +14,7 @@ class Review {
                 user_id,
                 movie_id)
                 VALUES ($1, $2, $3, $4, $5)
-                RETURNING id, rating, title, user_id AS "userId, movie_id AS "movieId"`,
+                RETURNING id, rating, title, user_id AS "userId", movie_id AS "movieId"`,
                 [
                     rating, 
                     title, 
@@ -38,19 +38,18 @@ class Review {
          const { setCols, values } = sqlForPartialUpdate(
             data,
             {
-                userId: "user_id",
-                movieId: "movie_id"
+                reviewId: "review_id"
             });
-        const usernameVarIdx = "$" + (values.length + 1);
+        const reviewIdVarIdx = "$" + (values.length + 1);
     
         const querySql = `UPDATE reviews 
                           SET ${setCols} 
-                          WHERE revie_id = ${usernameVarIdx} 
+                          WHERE review_id = ${reviewIdVarIdx} 
                           RETURNING id, 
                           rating, 
                           title, 
-                          user_id AS "userId, 
-                          movie_id AS "movieId`;
+                          user_id AS "userId", 
+                          movie_id AS "movieId"`;
         const result = await db.query(querySql, [...values, reviewId]);
         const review = result.rows[0];
     
@@ -85,9 +84,9 @@ class Review {
                 r.rating, 
                 r.title, 
                 r.body,
-                r.user_id AS "userId, 
-                r.created_at AS "createdAt, 
-                r.movie_id AS "movieId
+                r.user_id AS "userId", 
+                r.created_at AS "createdAt", 
+                r.movie_id AS "movieId"
             FROM reviews r
             JOIN movies m ON r.movie_id = m.id
             WHERE r.user_id = $1
