@@ -44,7 +44,7 @@ class Review {
     
         const querySql = `UPDATE reviews 
                           SET ${setCols} 
-                          WHERE review_id = ${reviewIdVarIdx} 
+                          WHERE id = ${reviewIdVarIdx} 
                           RETURNING id, 
                           rating, 
                           title, 
@@ -171,7 +171,7 @@ class Review {
 
     /** Get the reviews associated with a specific tag */
 
-    static async getReviewTags(tagId){
+    static async getReviewsByTags(tagId){
         try{
             let result = await db.query(
                 `SELECT r.id,
@@ -179,7 +179,7 @@ class Review {
                     r.title,
                     r.body,
                     r.user_id AS "userId",
-                    r.movie_id AS "movieId,
+                    r.movie_id AS "movieId",
                     r.created_at AS "createdAt"
                 FROM reviews r
                 JOIN review_tags rt ON r.id = rt.review_id
