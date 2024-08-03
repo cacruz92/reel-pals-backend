@@ -89,6 +89,29 @@ class Follow {
         }
     }
 
+        /** Delete given follow-follower relationship from table;  */
+
+        static async removeFollow(followingUserId, followedUserID) {
+            try {
+                let result = await db.query(
+                `DELETE
+                FROM follows
+                WHERE following_user_id = $1 AND
+                followed_user_id = $2
+                RETURNING following_user_id AS followingUserId, followed_user_id AS followedUserID`,
+                [followingUserId, followedUserID],
+                );
+                const follow = result.rows[0];
+    
+                if (!follow) throw new NotFoundError(`Follow relationship not found`);
+    
+                return follow; 
+            } catch (e){
+                console.error("Database error:", e);
+                throw new BadRequestError("Error removing follow relationship");
+            }
+        }
+
 }
 
 module.exports = Follow;
