@@ -106,6 +106,96 @@ class Review {
             throw new BadRequestError("Error fetching reviews for user");
         }
     }
+
+    /** Add tag to a review
+     * Updates the review_tags table
+     */
+
+    static async addTagToReview(reviewId, tagId){
+        try{
+            let result = await db.query(
+                `INSERT INTO review_tags
+                (review_id, tag_id)
+                VALUES ($1, $2)
+                RETURNING review_id AS "reviewId, tag_id AS "tagId"`,
+                [reviewId, tagId]
+            )
+            let tag = result.rows[0];
+            return tag;
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError("Error adding tag to review");
+        }
+    }
+
+    /** Remove a tag from a review
+     * Updates the review_tags table
+     */
+
+    static async removeTagFromReview(id){
+        try{
+            let result = await db.query(
+                `DELETE FROM review_tags
+                WHERE id = $1
+                RETURNING id`,
+                [id]
+            )
+            let tag = result.rows[0];
+            return tag;
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError("Error adding tag to review");
+        }
+    }
+
+    /** Get the tags associated with a specific review */
+
+    static async getReviewTags(reviewId){
+        try{
+            let result = await db.query(
+                `SELECT t.id,
+                    t.name
+                FROM tags t
+                JOIN review_tags rt ON t.id = rt.tag_id
+                WHERE rt.review_id = $1
+                ORDER BY t.name`,
+                [reviewId]
+            );
+            let tags = result.rows;
+            return tags;
+            
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError(`Error finding tags for review: ${reviewId}`);
+        }
+    }
+
+    /** Get the reviews associated with a specific tag */
+
+    static async getReviewTags(tagId){
+        try{
+            let result = await db.query(
+                `SELECT r.id,
+                    r.rating,
+                    r.title,
+                    r.body,
+                    r.user_id AS "userId",
+                    r.movie_id AS "movieId,
+                    r.created_at AS "createdAt"
+                FROM reviews r
+                JOIN review_tags rt ON r.id = rt.review_id
+                WHERE rt.tag_id = $1
+                ORDER BY r.created_at DESC`,
+                [tagId]
+            );
+            let reviews = result.rows;
+            return reviews;
+
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError(`Error finding reviews for tag: ${tagId}`);
+        }
+    }
 }
 
 module.exports = Review;
