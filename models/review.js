@@ -14,7 +14,7 @@ class Review {
                 user_id,
                 movie_id)
                 VALUES ($1, $2, $3, $4, $5)
-                RETURNING id, rating, title, user_id AS "userId, movie_id AS "movieId`,
+                RETURNING id, rating, title, user_id AS "userId, movie_id AS "movieId"`,
                 [
                     rating, 
                     title, 
@@ -45,7 +45,7 @@ class Review {
     
         const querySql = `UPDATE reviews 
                           SET ${setCols} 
-                          WHERE username = ${usernameVarIdx} 
+                          WHERE revie_id = ${usernameVarIdx} 
                           RETURNING id, 
                           rating, 
                           title, 
@@ -117,7 +117,7 @@ class Review {
                 `INSERT INTO review_tags
                 (review_id, tag_id)
                 VALUES ($1, $2)
-                RETURNING review_id AS "reviewId, tag_id AS "tagId"`,
+                RETURNING review_id AS "reviewId", tag_id AS "tagId"`,
                 [reviewId, tagId]
             )
             let tag = result.rows[0];

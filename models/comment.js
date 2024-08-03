@@ -35,7 +35,7 @@ class Comment{
      * Throws NotFoundError on duplicates
      */
 
-    static async editComment(userId, reviewId, body){
+    static async editComment(commentId, data){
 
         const { setCols, values } = sqlForPartialUpdate(
             data,
@@ -43,16 +43,16 @@ class Comment{
                 userId: "user_id",
                 reviewId: "review_id"
             });
-        const usernameVarIdx = "$" + (values.length + 1);
+        const commentVarIdx = "$" + (values.length + 1);
     
         const querySql = `UPDATE comments 
                           SET ${setCols} 
-                          WHERE username = ${usernameVarIdx} 
+                          WHERE username = ${commentVarIdx} 
                           RETURNING user_id AS "userId", review_id AS "reviewId", body`;
-        const result = await db.query(querySql, [...values, username]);
+        const result = await db.query(querySql, [...values, commentId]);
         const comment = result.rows[0];
     
-        if (!comment) throw new NotFoundError(`This comment no longer exists`);
+        if (!comment) throw new NotFoundError(`Comment not found: ${commentId}`);
     
         return comment;
     }

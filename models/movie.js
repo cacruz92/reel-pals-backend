@@ -32,7 +32,7 @@ class Movie{
             year,
             imdb_id)
             VALUES ($1, $2, $3)
-            RETURNING title, year, imdb_id AS "imdbId`,
+            RETURNING title, year, imdb_id AS "imdbId"`,
             [title, year, imdbId]
         )
 

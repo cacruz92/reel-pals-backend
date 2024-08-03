@@ -21,7 +21,7 @@ class Follow {
                 [followingUserId, followedUserID]
             )
 
-            const follow = result.row[0];
+            const follow = result.rows[0];
             return follow;
         } catch (e){
             console.error("Database error:", e);
@@ -49,10 +49,10 @@ class Follow {
 
             const followers = result.rows;
 
-            if(reviews.length === 0){
+            if(followers.length === 0){
                 throw new NotFoundError(`No followers found for user: ${userId}`);
             }
-            return reviews;
+            return followers;
         } catch (e){
             console.error("Database error:", e);
             throw new BadRequestError("Error fetching followers for user");
@@ -77,12 +77,12 @@ class Follow {
             [userId]
             );
 
-            const followers = result.rows;
+            const following = result.rows;
 
-            if(reviews.length === 0){
+            if(following.length === 0){
                 throw new NotFoundError(`User doesn't follow anyone yet`);
             }
-            return reviews;
+            return following;
         } catch (e){
             console.error("Database error:", e);
             throw new BadRequestError("Error fetching user's followed accounts");
