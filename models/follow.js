@@ -7,18 +7,18 @@ const {
 
 class Follow {
     /** Follow another user 
-     * adds a new following/followed relationship into the database.
+     * adds a new follower/followed relationship into the database.
     */
 
-    static async followUser(followingUsername, followedUsername){
+    static async followUser(followerUsername, followedUsername){
         try{
             const result = await db.query(
                 `INSERT INTO follows
-                (following_username,
+                (follower_username,
                 followed_username)
                 VALUES ($1, $2)
-                RETURNING following_username AS followingUsername, followed_username AS followedUsername`,
-                [followingUsername, followedUsername]
+                RETURNING follower_username AS followerUsername, followed_username AS followedUsername`,
+                [followerUsername, followedUsername]
             )
 
             const follow = result.rows[0];
@@ -41,8 +41,8 @@ class Follow {
                 u.last_name AS "lastName",
                 f.created_at AS "followedSince" 
             FROM users u
-            JOIN follows f ON u.id = f.followed_username
-            WHERE u.id = $1
+            JOIN follows f ON u.username = f.followed_username
+            WHERE u.username = $1
             ORDER BY f.created_at DESC`,
             [username]
             );
@@ -71,8 +71,8 @@ class Follow {
                 u.last_name AS "lastName",
                 f.created_at AS "followingSince" 
             FROM users u
-            JOIN follows f ON u.id = f.following_username
-            WHERE u.id = $1
+            JOIN follows f ON u.username = f.follower_username
+            WHERE u.username = $1
             ORDER BY f.created_at DESC`,
             [username]
             );
@@ -91,15 +91,15 @@ class Follow {
 
         /** Delete given follow-follower relationship from table;  */
 
-        static async removeFollow(followingUsername, followedUsername) {
+        static async removeFollow(followerUsername, followedUsername) {
             try {
                 let result = await db.query(
                 `DELETE
                 FROM follows
-                WHERE following_username = $1 AND
+                WHERE follower_username = $1 AND
                 followed_username = $2
-                RETURNING following_username AS "followingUsername", followed_username AS "followedUsername"`,
-                [followingUsername, followedUsername],
+                RETURNING follower_username AS "followerUsername", followed_username AS "followedUsername"`,
+                [followerUsername, followedUsername],
                 );
                 const follow = result.rows[0];
     

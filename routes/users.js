@@ -131,20 +131,20 @@ router.get('/:username/comments', async(req, res, next)=> {
 
 //Follows routes
 
-/** POST / { followingUserId, followedUserId }  => { follow }
+/** POST / { followerUsername, followedUsername }  => { follow }
  *
  * Adds a new follow relationship to the database. 
  *
  * This returns the newly created follow relationship:
- *  { followingUserId, followedUserId }
+ *  { followerUsername, followedUsername }
  *
  **/
 
 router.post('/:username/follow', async(req, res, next) => {
     try{
         const followedUsername = req.params.username; 
-        const {followingUsername} = req.body;
-        const newFollow = await Follow.followUser(followingUsername, followedUsername);
+        const {followerUsername} = req.body;
+        const newFollow = await Follow.followUser(followerUsername, followedUsername);
         return res.status(201).json({follow: newFollow})  
     } catch(e){
         return next(e)
@@ -178,7 +178,7 @@ router.get('/:username/followers', async(req, res, next) => {
  * Gets all users that a specific user is following
  *
  * This returns an array of followed users:
- *  { following: [ {id, username, firstName, lastName, followingSince}, ... ] }
+ *  { follower: [ {id, username, firstName, lastName, followerSince}, ... ] }
  *
  **/
 router.get('/:username/following', async(req, res, next) => {
@@ -196,15 +196,15 @@ router.get('/:username/following', async(req, res, next) => {
  * Removes a follow relationship from the database
  *
  * This returns the removed follow relationship:
- *  { removed: { followingUserId, followedUserId } }
+ *  { removed: { followerUsername, followedUsername } }
  *
  **/
 
 router.delete('/:username/follow', async( req, res, next ) => {
     try{
         const followedUsername = req.params.username;
-        const {followingUsername} = req.body;
-        const removedFollow = await Follow.removeFollow( followingUsername, followedUsername );
+        const {followerUsername} = req.body;
+        const removedFollow = await Follow.removeFollow( followerUsername, followedUsername );
         return res.json({removedFollow})
     } catch(e){
         return next(e)
