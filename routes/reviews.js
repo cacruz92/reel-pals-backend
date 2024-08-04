@@ -2,7 +2,7 @@
 
 const express = require("express");
 const {BadRequestError, NotFoundError} = require("../expressError");
-const Review = ("../models/review");
+const Review = require("../models/review");
 
 const router = express.Router();
 

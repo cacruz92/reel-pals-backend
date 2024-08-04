@@ -80,6 +80,46 @@ class Comment{
         return comment; 
     }
 
+
+    /** Finds all comments made by a particular user
+     * returns comments
+     */
+
+    static async findUserComments(userId){
+        const result = await db.query(
+            `SELECT id,
+            user_id AS "userId",
+            review_id AS "reviewId",
+            body,
+            created_at AS createdAt
+            FROM comments
+            WHERE user_id = $1
+            ORDER BY created_at DESC`,
+            [userId]
+        );
+
+        return result.rows;
+    }
+
+    /** Finds all comments made on a specific post
+     * returns comments
+     */
+
+    static async findReviewComments(reviewId){
+        const result = await db.query(
+            `SELECT id,
+            user_id AS "userId",
+            review_id AS "reviewId",
+            body,
+            created_at AS createdAt
+            FROM comments
+            WHERE review_id = $1
+            ORDER BY created_at DESC`,
+            [reviewId]
+        );
+
+        return result.rows;
+    }
 }
 
 module.exports = Comment;

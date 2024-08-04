@@ -1,5 +1,5 @@
 const express = require("express");
-const Movie = ("../models/movie")
+const Movie = require("../models/movie")
 
 const router = express.router();
 

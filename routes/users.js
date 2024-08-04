@@ -68,8 +68,6 @@ router.get('/:username', async (req, res, next) => {
     }
 })
 
-
-
 /** PATCH /[username] { user } => { user }
  *
  * Data can include:
