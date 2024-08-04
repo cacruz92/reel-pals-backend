@@ -3,6 +3,7 @@
 const express = require("express");
 const {BadRequestError} = require("../expressError");
 const User = require("../models/user");
+const Comment = require("../models/comment");
 const jwt = require("jsonwebtoken");
 const {JWT_SECRET} = require("../config");
 
@@ -112,6 +113,20 @@ router.delete('/:username', async(req, res, next) => {
     }
 });
 
+
+/** Find all comments made by a specific user */
+router.get('/:userId/comments', async(req, res, next)=> {
+    try{
+        const userId = req.params.userId;
+        const comments = await Comment.findUserComments(userId);
+        if(!comments){
+            throw new NotFoundError(`No comments found for this user: ${userId}`)
+        }
+        return res.json({ comments });
+    } catch(e) {
+        return next(e)
+    }
+})
 
 
 module.exports = router;

@@ -35,7 +35,16 @@ class Comment{
      * Throws NotFoundError on duplicates
      */
 
-    static async editComment(commentId, data){
+    static async editComment(commentId, {reviewId, ...data}){
+
+        const checkComment = await db.query(
+            `SELECT id FROM comments WHERE id = $1 AND review_id = $2`,
+            [commentId, reviewId]
+        );
+    
+        if (checkComment.rows.length === 0) {
+            throw new NotFoundError(`Comment not found or does not belong to the specified review`);
+        }
 
         const { setCols, values } = sqlForPartialUpdate(
             data,
@@ -48,7 +57,7 @@ class Comment{
         const querySql = `UPDATE comments 
                           SET ${setCols} 
                           WHERE id = ${commentVarIdx} 
-                          RETURNING user_id AS "userId", review_id AS "reviewId", body`;
+                          RETURNING id, user_id AS "userId", review_id AS "reviewId", body, created_at AS "createdAt"`;
         const result = await db.query(querySql, [...values, commentId]);
         const comment = result.rows[0];
     
@@ -64,14 +73,14 @@ class Comment{
      * Throws NotFoundError on duplicates
      */
 
-    static async removeComment(id){
+    static async removeComment(reviewId, commentId){
 
         let result = await db.query(
             `DELETE
             FROM comments
-            WHERE id = $1
+            WHERE id = $1 AND review_id = $2
             RETURNING user_id AS "userId", review_id AS "reviewId"`,
-            [id],
+            [commentId, reviewId],
         );
         const comment = result.rows[0];
 
