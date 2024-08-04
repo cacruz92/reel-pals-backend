@@ -11,7 +11,7 @@ const router = express.Router();
 router.post('/add', async(req, res,  next) => {
     try{
         const {userId, reviewId, body} = req.body;
-        const comment = await Comment.addComment(movieId, userId, rating, title, body);
+        const comment = await Comment.addComment(userId, reviewId, body);
         return res.status(201).json({comment})
     }catch (e){
         return next(e);
@@ -24,7 +24,7 @@ router.patch('/:commentId', async (req, res, next) => {
     try{
         const commentId = req.params.commentId;
         const data = req.body;
-        const updatedComment = await Comment.editComment(commentId, rating, title, body)
+        const updatedComment = await Comment.editComment(commentId, data)
 
         if(!updatedComment){
             throw new NotFoundError(`Comment with id ${commentId} not found`)
@@ -41,7 +41,7 @@ router.delete('/:commentId', async(req, res, next) => {
         const commentId = req.params.commentId;
         const deletedComment = await Comment.removeComment(commentId);
 
-        if(!updatedComment){
+        if(!deletedComment){
             throw new NotFoundError(`Comment with id ${commentId} not found`)
         }
         return res.json({ deleted: deletedComment });

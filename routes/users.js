@@ -52,7 +52,7 @@ router.post('/login', async (req, res, next) => {
 
 /** GET /[username] => { user }
  *
- * Returns { username, firstName, lastName, isAdmin, jobs }
+ * Returns { username, firstName, lastName, email, birthday }
  *   where jobs is { id, title, companyHandle, companyName, state }
  *
  * Authorization required: friend or same user-as-:username

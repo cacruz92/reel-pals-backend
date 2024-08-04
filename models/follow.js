@@ -42,7 +42,7 @@ class Follow {
                 f.created_at AS "followedSince" 
             FROM users u
             JOIN follows f ON u.id = f.followed_user_id
-            WHERE u.user_id = $1
+            WHERE u.id = $1
             ORDER BY f.created_at DESC`,
             [userId]
             );
@@ -72,7 +72,7 @@ class Follow {
                 f.created_at AS "followingSince" 
             FROM users u
             JOIN follows f ON u.id = f.following_user_id
-            WHERE u.user_id = $1
+            WHERE u.id = $1
             ORDER BY f.created_at DESC`,
             [userId]
             );

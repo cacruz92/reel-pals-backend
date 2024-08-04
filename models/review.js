@@ -114,9 +114,9 @@ class Review {
         try{
             let result = await db.query(
                 `INSERT INTO review_tags
-                (review_id, tag_name)
+                (review_id, name)
                 VALUES ($1, $2)
-                RETURNING id, review_id AS "reviewId", tag_name AS "tagName"`,
+                RETURNING id, review_id AS "reviewId", name AS "tagName"`,
                 [reviewId, tagName]
             )
             let tag = result.rows[0];

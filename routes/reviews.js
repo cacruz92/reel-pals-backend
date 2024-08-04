@@ -24,7 +24,7 @@ router.patch('/:reviewId', async (req, res, next) => {
     try{
         const reviewId = req.params.reviewId;
         const {rating, title, body} = req.body;
-        const updatedReview = await Review.editReview(reviewId, rating, title, body)
+        const updatedReview = await Review.editReview(reviewId, {rating, title, body})
 
         if(!updatedReview){
             throw new NotFoundError(`Review with id ${reviewId} not found`)
@@ -41,7 +41,7 @@ router.delete('/:reviewId', async(req, res, next) => {
         const reviewId = req.params.reviewId;
         const deletedReview = await Review.removeReview(reviewId);
 
-        if(!updatedReview){
+        if(!deletedReview){
             throw new NotFoundError(`Review with id ${reviewId} not found`)
         }
         return res.json({ deleted: deletedReview });
@@ -107,11 +107,11 @@ router.get('/tags/:tagName', async(req, res, next)=> {
         const tagName = req.params.tagName;
         const taggedReviews = await Review.getReviewsByTags(tagName);
 
-        if(!reviews){
+        if(!taggedReviews){
             throw new NotFoundError(`Error finding reviews for tag: ${tagName}`)
         }
 
-        return res.json({ reviews });
+        return res.json({ taggedReviews });
     } catch(e){
         return next(e)
     }
