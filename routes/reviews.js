@@ -4,6 +4,7 @@ const express = require("express");
 const {BadRequestError, NotFoundError} = require("../expressError");
 const Review = require("../models/review");
 const Comment = require("../models/comment");
+const Like = require("../models/like");
 
 const router = express.Router();
 
@@ -181,6 +182,39 @@ router.get('/:reviewId/comments', async(req, res, next)=> {
         }
         return res.json({ comments });
     } catch(e) {
+        return next(e)
+    }
+})
+
+//Like routes
+/** These are nested within reviews because it allows for better routing
+ * as likes are only relevant to reviews
+ */
+
+
+/** Adds a new like to a review. **/
+
+router.post('/:reviewId/like', async(req, res, next) => {
+    try{
+        const {userId} = req.body;
+        const reviewId = req.params.reviewId;
+        const like = await Like.addLike(userId, reviewId);
+        return res.status(201).json({like})  
+    } catch(e){
+        next(e)
+    }
+})
+
+
+/** Removes a like from a review */
+
+router.delete('/:reviewId/like', async( req, res, next ) => {
+    try{
+        const {userId} = req.body;
+        const reviewId = req.params.reviewId;
+        const removed = await Like.removeLike(userId, reviewId);
+        return res.json({removed})
+    } catch(e){
         return next(e)
     }
 })
