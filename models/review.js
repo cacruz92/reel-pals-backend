@@ -155,7 +155,7 @@ class Review {
                 `SELECT t.id,
                     t.name
                 FROM tags t
-                JOIN review_tags rt ON t.id = rt.tag_name
+                JOIN review_tags rt ON t.name = rt.tag_name
                 WHERE rt.review_id = $1
                 ORDER BY t.name`,
                 [reviewId]
