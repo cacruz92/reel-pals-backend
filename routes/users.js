@@ -4,6 +4,7 @@ const express = require("express");
 const {BadRequestError} = require("../expressError");
 const User = require("../models/user");
 const Comment = require("../models/comment");
+const Follow = require("../models/follow");
 const jwt = require("jsonwebtoken");
 const {JWT_SECRET} = require("../config");
 
@@ -115,15 +116,97 @@ router.delete('/:username', async(req, res, next) => {
 
 
 /** Find all comments made by a specific user */
-router.get('/:userId/comments', async(req, res, next)=> {
+router.get('/:username/comments', async(req, res, next)=> {
     try{
-        const userId = req.params.userId;
-        const comments = await Comment.findUserComments(userId);
+        const username = req.params.username;
+        const comments = await Comment.findUserComments(username);
         if(!comments){
-            throw new NotFoundError(`No comments found for this user: ${userId}`)
+            throw new NotFoundError(`No comments found for this user: ${username}`)
         }
         return res.json({ comments });
     } catch(e) {
+        return next(e)
+    }
+})
+
+//Follows routes
+
+/** POST / { followingUserId, followedUserId }  => { follow }
+ *
+ * Adds a new follow relationship to the database. 
+ *
+ * This returns the newly created follow relationship:
+ *  { followingUserId, followedUserId }
+ *
+ **/
+
+router.post('/:username/follow', async(req, res, next) => {
+    try{
+        const followedUsername = req.params.username; 
+        const {followingUsername} = req.body;
+        const newFollow = await Follow.followUser(followingUsername, followedUsername);
+        return res.status(201).json({follow: newFollow})  
+    } catch(e){
+        return next(e)
+    }
+})
+
+
+/** GET /followers/:username  => { followers }
+ *
+ * Gets all followers for a specific user
+ *
+ * This returns an array of followers:
+ *  { followers: [ {id, username, firstName, lastName, followedSince}, ... ] }
+ *
+ **/
+
+router.get('/:username/followers', async(req, res, next) => {
+    try{
+        const username = req.params.username;
+        const followers = await Follow.findUserFollowers(username);
+        return res.json({followers})  
+    } catch(e){
+        return next(e)
+    }
+})
+
+
+
+/** GET /:username/following  => { following }
+ *
+ * Gets all users that a specific user is following
+ *
+ * This returns an array of followed users:
+ *  { following: [ {id, username, firstName, lastName, followingSince}, ... ] }
+ *
+ **/
+router.get('/:username/following', async(req, res, next) => {
+    try{
+        const username = req.params.username;
+        const following = await Follow.findUserFollowing(username);
+        return res.json({following})  
+    } catch(e){
+        return next(e)
+    }
+})
+
+/** DELETE /remove  => { removed }
+ *
+ * Removes a follow relationship from the database
+ *
+ * This returns the removed follow relationship:
+ *  { removed: { followingUserId, followedUserId } }
+ *
+ **/
+
+router.delete('/:username/follow', async( req, res, next ) => {
+    try{
+        const followedUsername = req.params.username;
+        const {followingUsername} = req.body;
+        const removedFollow = await Follow.removeFollow( followingUsername, followedUsername );
+        return res.json({removedFollow})
+    } catch(e){
         return next(e)
     }
 })

@@ -10,15 +10,15 @@ class Follow {
      * adds a new following/followed relationship into the database.
     */
 
-    static async followUser(followingUserId, followedUserID){
+    static async followUser(followingUsername, followedUsername){
         try{
             const result = await db.query(
                 `INSERT INTO follows
-                (following_user_id,
-                followed_user_id)
+                (following_username,
+                followed_username)
                 VALUES ($1, $2)
-                RETURNING following_user_id AS followingUserId, followed_user_id AS followedUserID`,
-                [followingUserId, followedUserID]
+                RETURNING following_username AS followingUsername, followed_username AS followedUsername`,
+                [followingUsername, followedUsername]
             )
 
             const follow = result.rows[0];
@@ -32,7 +32,7 @@ class Follow {
     /** Show all followers 
      * shows a list of all users that follow a particular user
     */
-    static async findUserFollowers(userId){
+    static async findUserFollowers(username){
         try{
             let result = await db.query(
             `SELECT u.id,
@@ -41,16 +41,16 @@ class Follow {
                 u.last_name AS "lastName",
                 f.created_at AS "followedSince" 
             FROM users u
-            JOIN follows f ON u.id = f.followed_user_id
+            JOIN follows f ON u.id = f.followed_username
             WHERE u.id = $1
             ORDER BY f.created_at DESC`,
-            [userId]
+            [username]
             );
 
             const followers = result.rows;
 
             if(followers.length === 0){
-                throw new NotFoundError(`No followers found for user: ${userId}`);
+                throw new NotFoundError(`No followers found for user: ${username}`);
             }
             return followers;
         } catch (e){
@@ -62,7 +62,7 @@ class Follow {
     /** Show all following 
      * shows a list of all users that a particular user follows
     */
-    static async findUserFollowing(userId){
+    static async findUserFollowing(username){
         try{
             let result = await db.query(
             `SELECT u.id,
@@ -71,10 +71,10 @@ class Follow {
                 u.last_name AS "lastName",
                 f.created_at AS "followingSince" 
             FROM users u
-            JOIN follows f ON u.id = f.following_user_id
+            JOIN follows f ON u.id = f.following_username
             WHERE u.id = $1
             ORDER BY f.created_at DESC`,
-            [userId]
+            [username]
             );
 
             const following = result.rows;
@@ -91,15 +91,15 @@ class Follow {
 
         /** Delete given follow-follower relationship from table;  */
 
-        static async removeFollow(followingUserId, followedUserID) {
+        static async removeFollow(followingUsername, followedUsername) {
             try {
                 let result = await db.query(
                 `DELETE
                 FROM follows
-                WHERE following_user_id = $1 AND
-                followed_user_id = $2
-                RETURNING following_user_id AS followingUserId, followed_user_id AS followedUserID`,
-                [followingUserId, followedUserID],
+                WHERE following_username = $1 AND
+                followed_username = $2
+                RETURNING following_username AS "followingUsername", followed_username AS "followedUsername"`,
+                [followingUsername, followedUsername],
                 );
                 const follow = result.rows[0];
     

@@ -14,10 +14,10 @@ CREATE TABLE users (
 );
 
 CREATE TABLE follows (
-    following_user_id INTEGER REFERENCES users(id),
-    followed_user_id INTEGER REFERENCES users(id),
+    following_username VARCHAR(255) REFERENCES users(username),
+    followed_username VARCHAR(255) REFERENCES users(username),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (following_user_id, followed_user_id)
+    PRIMARY KEY (following_username, followed_username)
 );
 
 CREATE TABLE movies (
@@ -52,7 +52,7 @@ CREATE TABLE tags (
 
 CREATE TABLE review_tags (
     id SERIAL PRIMARY KEY,
-    tag_name INTEGER REFERENCES tags(name),
+    tag_name VARCHAR(255) REFERENCES tags(name),
     review_id INTEGER REFERENCES reviews(id)
 );
 
@@ -62,12 +62,10 @@ CREATE TABLE likes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, review_id)
 );
-
-
 CREATE DATABASE reel_pals_test;
 
-\c reel_pals_test
 
+\c reel_pals_test
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
