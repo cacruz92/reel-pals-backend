@@ -14,6 +14,17 @@ class Like{
 
     static async addLike(userId, reviewId){
 
+        //check for duplicates
+        const duplicateCheck = await db.query(
+            `SELECT id
+            FROM likes
+            WHERE user_id = $1 AND review_id = $2`,
+            [userId, reviewId]
+        )
+        if(duplicateCheck.rows[0]){
+            throw new BadRequestError("User has already liked this review")
+        }
+
         const result = await db.query(
             `INSERT INTO likes
             (user_id,
