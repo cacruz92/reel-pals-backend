@@ -1,7 +1,7 @@
 const express = require("express");
 const Movie = require("../models/movie")
 
-const router = express.router();
+const router = express.Router();
 
 /** POST / { movie }  => { movie }
  *
