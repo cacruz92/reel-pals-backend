@@ -131,13 +131,13 @@ class Review {
      * Updates the review_tags table
      */
 
-    static async removeTagFromReview(id){
+    static async removeTagFromReview(reviewId, tagName){
         try{
             let result = await db.query(
                 `DELETE FROM review_tags
-                WHERE id = $1
-                RETURNING id`,
-                [id]
+                WHERE review_id = $1 AND tag_name = $2
+                RETURNING id, review_id AS "reviewId", name AS "tagName"`,
+                [reviewId, tagName]
             )
             let tag = result.rows[0];
             return tag;

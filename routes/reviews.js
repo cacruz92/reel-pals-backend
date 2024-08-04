@@ -50,8 +50,8 @@ router.delete('/:reviewId', async(req, res, next) => {
     }
 });
 
-/** find all reviews made by a specific user */
-router.get('/:userId/all', async(req, res, next)=> {
+/** Find all reviews made by a specific user */
+router.get('/:userId', async(req, res, next)=> {
     try{
         const userId = req.params.userId;
         const reviews = await Review.findUserReviews(userId);
@@ -76,11 +76,11 @@ router.post('/:reviewId/tag', async(req, res, next) => {
     }
 })
 
-/** remove tag from a review */
-router.delete('/:reviewId/tag/:id', async(req, res, next) => {
+/** Remove tag from a review */
+router.delete('/:reviewId/tag/:tagName', async(req, res, next) => {
     try {
-        const id = req.params.id;
-        const removedTag = await Review.removeTagFromReview(id);
+        const {reviewId, tagName} = req.params.tagName;
+        const removedTag = await Review.removeTagFromReview(reviewId, tagName);
         return res.json({removed: removedTag})
     } catch(e){
         return next(e);
