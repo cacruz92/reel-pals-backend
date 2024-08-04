@@ -121,7 +121,8 @@ class User {
         return user;
     }
 
-    /** Delete given user from database; returns undefined. */
+    /** Delete given user from database; 
+     * Throws NotFoundError if user not found. */
 
     static async remove(username) {
         let result = await db.query(
@@ -182,6 +183,10 @@ class User {
     
         return user;
       }
+
+      
+
+      
 }
 
 module.exports = User;

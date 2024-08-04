@@ -20,7 +20,7 @@ router.post('/add', async(req, res,  next) => {
 
 /** edit a review */
 
-router.patch('/edit/:reviewId', async (req, res, next) => {
+router.patch('/:reviewId', async (req, res, next) => {
     try{
         const reviewId = req.params.reviewId;
         const {rating, title, body} = req.body;
@@ -36,7 +36,7 @@ router.patch('/edit/:reviewId', async (req, res, next) => {
 });
 
 /** delete a review */
-router.delete('/:reviewId/delete', async(req, res, next) => {
+router.delete('/:reviewId', async(req, res, next) => {
     try {
         const reviewId = req.params.reviewId;
         const deletedReview = await Review.removeReview(reviewId);
@@ -116,3 +116,5 @@ router.get('/tags/:tagName', async(req, res, next)=> {
         return next(e)
     }
 })
+
+module.exports = router;

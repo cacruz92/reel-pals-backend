@@ -68,4 +68,52 @@ router.get('/:username', async (req, res, next) => {
     }
 })
 
+
+
+/** PATCH /[username] { user } => { user }
+ *
+ * Data can include:
+ *   { firstName, lastName, password, email, birthday }
+ *
+ * Returns { username, firstName, lastName, email, birthday }
+ *
+ * Authorization required: same-user-as-:username
+ **/
+
+router.patch('/:username', async (req, res, next) => {
+    try{
+        const username = req.params.username;
+        const data = req.body;
+        const user = await User.update(username, data)
+
+        if(!user){
+            throw new NotFoundError(`User with username ${username} not found`)
+        }
+        return res.json({user});
+    }catch(e){
+        return next(e)
+    }
+});
+
+/** DELETE /[username]  =>  { deleted: username }
+ *
+ * Authorization required: same-user-as-:username or admin
+ **/
+
+router.delete('/:username', async(req, res, next) => {
+    try {
+        const username = req.params.username;
+        const deletedUser = await User.remove(username);
+
+        if(!deletedUser){
+            throw new NotFoundError(`User with username ${username} not found`)
+        }
+        return res.json({ deleted: deletedUser });
+    } catch(e){
+        return next(e);
+    }
+});
+
+
+
 module.exports = router;
