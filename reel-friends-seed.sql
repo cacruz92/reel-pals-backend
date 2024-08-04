@@ -52,7 +52,7 @@ CREATE TABLE tags (
 
 CREATE TABLE review_tags (
     id SERIAL PRIMARY KEY,
-    tag_id INTEGER REFERENCES tags(id),
+    tag_name INTEGER REFERENCES tags(name),
     review_id INTEGER REFERENCES reviews(id)
 );
 

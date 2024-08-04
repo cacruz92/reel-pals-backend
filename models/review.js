@@ -110,14 +110,14 @@ class Review {
      * Updates the review_tags table
      */
 
-    static async addTagToReview(reviewId, tagId){
+    static async addTagToReview(reviewId, tagName){
         try{
             let result = await db.query(
                 `INSERT INTO review_tags
-                (review_id, tag_id)
+                (review_id, tag_name)
                 VALUES ($1, $2)
-                RETURNING review_id AS "reviewId", tag_id AS "tagId"`,
-                [reviewId, tagId]
+                RETURNING id, review_id AS "reviewId", tag_name AS "tagName"`,
+                [reviewId, tagName]
             )
             let tag = result.rows[0];
             return tag;
@@ -155,7 +155,7 @@ class Review {
                 `SELECT t.id,
                     t.name
                 FROM tags t
-                JOIN review_tags rt ON t.id = rt.tag_id
+                JOIN review_tags rt ON t.id = rt.tag_name
                 WHERE rt.review_id = $1
                 ORDER BY t.name`,
                 [reviewId]
@@ -171,7 +171,7 @@ class Review {
 
     /** Get the reviews associated with a specific tag */
 
-    static async getReviewsByTags(tagId){
+    static async getReviewsByTags(tagName){
         try{
             let result = await db.query(
                 `SELECT r.id,
@@ -183,16 +183,16 @@ class Review {
                     r.created_at AS "createdAt"
                 FROM reviews r
                 JOIN review_tags rt ON r.id = rt.review_id
-                WHERE rt.tag_id = $1
+                WHERE rt.tag_name = $1
                 ORDER BY r.created_at DESC`,
-                [tagId]
+                [tagName]
             );
             let reviews = result.rows;
             return reviews;
 
         }catch(e){
             console.error("Database error:", e);
-            throw new BadRequestError(`Error finding reviews for tag: ${tagId}`);
+            throw new BadRequestError(`Error finding reviews for tag: ${tagName}`);
         }
     }
 }
