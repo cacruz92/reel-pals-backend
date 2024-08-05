@@ -22,9 +22,26 @@ CREATE TABLE follows (
 
 CREATE TABLE movies (
     id SERIAL PRIMARY KEY,
+    imdb_id VARCHAR(255) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
     year INTEGER,
-    imdb_id VARCHAR(255) UNIQUE
+    actor1 VARCHAR(255),
+    actor2 VARCHAR(255),
+    actor3 VARCHAR(255),
+    country VARCHAR(255),
+    director VARCHAR(255),
+    genre1 VARCHAR(100),
+    genre2 VARCHAR(100),
+    genre3 VARCHAR(100),
+    plot TEXT,
+    poster_url TEXT,
+    rated VARCHAR(10),
+    imdb_rating VARCHAR(10),
+    rotten_tomatoes_rating VARCHAR(10),
+    metacritic_rating VARCHAR(10),
+    released VARCHAR(50),
+    runtime VARCHAR(50),
+    writer VARCHAR(255)
 );
 
 CREATE TABLE reviews (
