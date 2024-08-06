@@ -65,7 +65,7 @@ router.post('/add', async(req, res, next) => {
 
 
         const movie = await Movie.addMovie(movieData);
-        return res.status(201).json({movie})
+        return res.status(movie.id ? 201 : 200).json({movie})
     } catch(e){
         return next(e);
     }

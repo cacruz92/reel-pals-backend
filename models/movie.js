@@ -22,7 +22,7 @@ class Movie{
         )
 
         if (duplicateCheck.rows[0]) {
-            throw new BadRequestError(`Movie with IMDb ID ${imdbID} already exists!`);
+            return duplicateCheck.rows[0];
           }
           
         const result = await db.query(
