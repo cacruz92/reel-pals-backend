@@ -46,12 +46,12 @@ CREATE TABLE movies (
 
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
-    rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5) NOT NULL,
     title VARCHAR(255) NOT NULL,
-    body TEXT,
-    user_id INTEGER REFERENCES users(id),
-    movie_id INTEGER REFERENCES movies(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    body TEXT NOT NULL,
+    user_username INTEGER REFERENCES users(username) NOT NULL,
+    movie_id INTEGER REFERENCES movies(id) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE comments (
