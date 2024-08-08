@@ -12,8 +12,16 @@ const router = express.Router();
 
 router.post('/add', async(req, res,  next) => {
     try{
-        const {movieId, userId, rating, title, body} = req.body;
-        const review = await Review.addReview(movieId, userId, rating, title, body);
+        console.log("Received review data:", req.body);
+        const {movie_imdb_id, username, rating, title, body} = req.body;
+        const review = await Review.addReview({
+            rating, 
+            title, 
+            body, 
+            movie_imdb_id, 
+            user_username: username 
+        });
+        
         return res.status(201).json({review})
     }catch (e){
         return next(e);

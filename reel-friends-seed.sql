@@ -50,7 +50,7 @@ CREATE TABLE reviews (
     title VARCHAR(255) NOT NULL,
     body TEXT NOT NULL,
     user_username INTEGER REFERENCES users(username) NOT NULL,
-    movie_id INTEGER REFERENCES movies(id) NOT NULL,
+    movie_imdb_id INTEGER REFERENCES movies(imdb_id) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 

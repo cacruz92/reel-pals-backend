@@ -4,23 +4,24 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Review {
     /** add a new review */
-    static async addReview(movieId, userId, rating, title, body){
+    static async addReview({movie_imdb_id, user_username, rating, title, body}){
+        console.log("Adding review with data:", { rating, title, body, user_username, movie_imdb_id });
         try{
             const result = await db.query(
                 `INSERT INTO reviews
                 (rating,
                 title,
                 body,
-                user_id,
-                movie_id)
+                user_username,
+                movie_imdb_id)
                 VALUES ($1, $2, $3, $4, $5)
-                RETURNING id, rating, title, user_id AS "userId", movie_id AS "movieId"`,
+                RETURNING id, rating, title, user_username AS "user_username", movie_imdb_id AS "movie_Imbd_Id"`,
                 [
                     rating, 
                     title, 
                     body, 
-                    userId, 
-                    movieId
+                    user_username, 
+                    movie_imdb_id
                 ]
             )
 
@@ -48,8 +49,8 @@ class Review {
                           RETURNING id, 
                           rating, 
                           title, 
-                          user_id AS "userId", 
-                          movie_id AS "movieId"`;
+                          user_username AS "user_username", 
+                          movie_imdb_id AS "movie_Imbd_Id"`;
         const result = await db.query(querySql, [...values, reviewId]);
         const review = result.rows[0];
     
@@ -77,27 +78,27 @@ class Review {
 
     /** find all reviews made by a specific user */
 
-    static async findUserReviews(userId){
+    static async findUserReviews(user_username){
         try{
             let result = await db.query(
             `SELECT r.id, 
                 r.rating, 
                 r.title, 
                 r.body,
-                r.user_id AS "userId", 
+                r.user_username AS "user_username", 
                 r.created_at AS "createdAt", 
-                r.movie_id AS "movieId"
+                r.movie_imdb_id AS "movie_Imbd_Id"
             FROM reviews r
-            JOIN movies m ON r.movie_id = m.id
-            WHERE r.user_id = $1
+            JOIN movies m ON r.movie_imdb_id = m.id
+            WHERE r.user_username = $1
             ORDER BY r.created_at DESC`,
-            [userId]
+            [user_username]
             );
 
             const reviews = result.rows;
 
             if(reviews.length === 0){
-                throw new NotFoundError(`No reviews found for user with id ${userId}`);
+                throw new NotFoundError(`No reviews found for user with id ${user_username}`);
             }
             return reviews;
         } catch (e){
@@ -178,8 +179,8 @@ class Review {
                     r.rating,
                     r.title,
                     r.body,
-                    r.user_id AS "userId",
-                    r.movie_id AS "movieId",
+                    r.user_username AS "user_username",
+                    r.movie_imdb_id AS "movie_Imbd_Id",
                     r.created_at AS "createdAt"
                 FROM reviews r
                 JOIN review_tags rt ON r.id = rt.review_id
