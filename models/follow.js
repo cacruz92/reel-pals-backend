@@ -22,6 +22,9 @@ class Follow {
             )
 
             const follow = result.rows[0];
+
+            if (!follow) throw new BadRequestError(`Couldn't create follow relationship`);
+
             return follow;
         } catch (e){
             console.error("Database error:", e);
@@ -65,11 +68,11 @@ class Follow {
     static async findUserFollowing(username){
         try{
             let result = await db.query(
-            `SELECT u.id,
+            `SELECT 
                 u.username, 
                 u.first_name AS "firstName", 
                 u.last_name AS "lastName",
-                f.created_at AS "followingSince" 
+                f.created_at AS "followerSince" 
             FROM users u
             JOIN follows f ON f.follower_username = u.username
             WHERE f.follower_username = $1

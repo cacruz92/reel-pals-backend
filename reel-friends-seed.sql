@@ -129,47 +129,31 @@ VALUES
 -- User: user1
 INSERT INTO reviews (rating, title, body, user_username, movie_imdb_id, created_at, poster)
 VALUES
-(4, 'Amazing Adventure', 'This film took me on a thrilling adventure. The plot was gripping, and the characters were well-developed. A must-watch!', 'user1', 'tt0121111', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(5, 'Masterpiece!', 'An absolute masterpiece of cinema. The visuals were stunning, and the soundtrack was incredible. Highly recommended!', 'user1', 'tt0122222', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(3, 'Not Bad', 'The movie was decent but didn’t quite live up to the hype. Some interesting moments, but overall it felt lacking.', 'user1', 'tt0076759', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(2, 'Disappointing', 'I was disappointed with this film. The storyline was weak, and the characters were not engaging.', 'user1', 'tt0080684', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(4, 'Great Fun!', 'A fun and enjoyable movie with great performances. It was a refreshing experience with lots of laughs and excitement.', 'user1', 'tt0086190', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png');
-
--- User: user2
-INSERT INTO reviews (rating, title, body, user_username, movie_imdb_id, created_at, poster)
-VALUES
-(3, 'Good But Forgettable', 'The film was good but nothing special. It’s one of those movies that you forget about soon after watching.', 'user2', 'tt2036416', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(4, 'Solid Performance', 'A solid performance by the cast. The movie had its moments, and I enjoyed the overall experience.', 'user2', 'tt4649558', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(5, 'Highly Entertaining', 'Absolutely entertaining from start to finish. The plot twists kept me on the edge of my seat. Great movie!', 'user2', 'tt0222012', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(2, 'Mediocre', 'The movie was mediocre at best. It didn’t have much substance and felt very predictable.', 'user2', 'tt1307068', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(3, 'Entertaining', 'An entertaining film but with some flaws. It was a decent watch but didn’t quite meet expectations.', 'user2', 'tt1392170', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png');
-
--- User: user3
-INSERT INTO reviews (rating, title, body, user_username, movie_imdb_id, created_at, poster)
-VALUES
-(4, 'Impressive Drama', 'The drama was impressively executed, with strong performances and a compelling storyline. Worth watching.', 'user3', 'tt1951264', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(5, 'Incredible Journey', 'A breathtaking journey through an amazing story. The visuals and soundtrack were top-notch. A must-see!', 'user3', 'tt1951265', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(3, 'Entertaining Yet Flawed', 'The movie was entertaining but had its flaws. Some parts dragged on, but overall it was an enjoyable experience.', 'user3', 'tt1951266', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
+(4, 'Amazing Adventure', 'This film took me on a thrilling adventure. The plot was gripping, and the characters were well-developed. A must-watch!', 'user1', 'tt0121111', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BZDkzYmFmNWMtNjExNi00YTQ0LWFiNWEtYzJlZjllYjhmMjhiXkEyXkFqcGdeQXVyMTIxMzMzMzE@._V1_SX300.jpg'),
+(5, 'Masterpiece!', 'An absolute masterpiece of cinema. The visuals were stunning, and the soundtrack was incredible. Highly recommended!', 'user1', 'tt0122222', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMDM3MTkyZjktNmI3MS00OWExLWI0ZjYtZTgxYTYwYThjYWJhXkEyXkFqcGdeQXVyNjUzNzQ4NDQ@._V1_SX300.jpg'),
+(3, 'Not Bad', 'The movie was decent but didn’t quite live up to the hype. Some interesting moments, but overall it felt lacking.', 'user1', 'tt0076759', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BOTA5NjhiOTAtZWM0ZC00MWNhLThiMzEtZDFkOTk2OTU1ZDJkXkEyXkFqcGdeQXVyMTA4NDI1NTQx._V1_SX300.jpg'),
+(2, 'Disappointing', 'I was disappointed with this film. The storyline was weak, and the characters were not engaging.', 'user1', 'tt0080684', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BYmU1NDRjNDgtMzhiMi00NjZmLTg5NGItZDNiZjU5NTU4OTE0XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg'),
+(4, 'Great Fun!', 'A fun and enjoyable movie with great performances. It was a refreshing experience with lots of laughs and excitement.', 'user1', 'tt0086190', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BOWZlMjFiYzgtMTUzNC00Y2IzLTk1NTMtZmNhMTczNTk0ODk1XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_SX300.jpg'),
+(3, 'Good But Forgettable', 'The film was good but nothing special. It’s one of those movies that you forget about soon after watching.', 'user2', 'tt2036416', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMWU2OTAyMTktMTU5MC00MTNhLTg1NzAtOTZjNWFjMDRiZGUxXkEyXkFqcGdeQXVyNDY3MzUxOTI@._V1_SX300.jpg'),
+(4, 'Solid Performance', 'A solid performance by the cast. The movie had its moments, and I enjoyed the overall experience.', 'user2', 'tt4649558', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BYTQ2ZWJlZTUtNWFlZC00YjBhLTlhOWEtNGQ4NDBhNjAzNGI0XkEyXkFqcGdeQXVyMjU3MzQ3NjE@._V1_SX300.jpg'),
+(5, 'Highly Entertaining', 'Absolutely entertaining from start to finish. The plot twists kept me on the edge of my seat. Great movie!', 'user2', 'tt0222012', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BYzMxYzZjMDUtZjI3Ni00Y2M2LTllYWItNzJmZTJjMzkyYjlmXkEyXkFqcGdeQXVyODEzOTQwNTY@._V1_SX300.jpg'),
+(2, 'Mediocre', 'The movie was mediocre at best. It didn’t have much substance and felt very predictable.', 'user2', 'tt1307068', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMTk4MDQ1NzE3N15BMl5BanBnXkFtZTcwMjA0MDkzNw@@._V1_SX300.jpg'),
+(3, 'Entertaining', 'An entertaining film but with some flaws. It was a decent watch but didn’t quite meet expectations.', 'user2', 'tt1392170', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BZWI1OWM3ZmEtNjQ2OS00NzI2LTgwNWMtZDAyMGI1OTM2MzJmXkEyXkFqcGdeQXVyNjc5NjEzNA@@._V1_SX300.jpg'),
+(4, 'Impressive Drama', 'The drama was impressively executed, with strong performances and a compelling storyline. Worth watching.', 'user3', 'tt1951264', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMTAyMjQ3OTAxMzNeQTJeQWpwZ15BbWU4MDU0NzA1MzAx._V1_SX300.jpg'),
+(5, 'Incredible Journey', 'A breathtaking journey through an amazing story. The visuals and soundtrack were top-notch. A must-see!', 'user3', 'tt1951265', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMTcxNDI2NDAzNl5BMl5BanBnXkFtZTgwODM3MTc2MjE@._V1_SX300.jpg'),
+(3, 'Entertaining Yet Flawed', 'The movie was entertaining but had its flaws. Some parts dragged on, but overall it was an enjoyable experience.', 'user3', 'tt1951266', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BNjQzNDI2NTU1Ml5BMl5BanBnXkFtZTgwNTAyMDQ5NjE@._V1_SX300.jpg'),
 (2, 'Underwhelming', 'The film did not meet my expectations. The plot was predictable, and the character development was lacking.', 'user3', 'tt1951267', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(4, 'Great Watch', 'A great watch with a few memorable moments. The acting was solid, and the direction was commendable.', 'user3', 'tt1951268', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png');
-
--- User: user4
-INSERT INTO reviews (rating, title, body, user_username, movie_imdb_id, created_at, poster)
-VALUES
-(3, 'Decent Flick', 'A decent flick with some good moments, but it didn’t stand out as much as I hoped. Still, worth a watch.', 'user4', 'tt1951225', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
+(4, 'Great Watch', 'A great watch with a few memorable moments. The acting was solid, and the direction was commendable.', 'user3', 'tt1951268', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
+(3, 'Decent Flick', 'A decent flick with some good moments, but it didn’t stand out as much as I hoped. Still, worth a watch.', 'user4', 'tt1951225', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMTk4MDE1MTkwN15BMl5BanBnXkFtZTcwNTM3MjU4NQ@@._V1_SX300.jpg'),
 (4, 'Well Done', 'The movie was well done with strong performances and a gripping storyline. It kept me engaged throughout.', 'user4', 'tt1951300', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
 (5, 'Fantastic Film', 'A fantastic film with excellent direction and a compelling plot. The acting was superb. Highly recommend!', 'user4', 'tt1951205', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
 (2, 'Not Worth It', 'The film didn’t live up to the hype. It was slow-paced and lacked depth. Not worth the time.', 'user4', 'tt1965489', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(3, 'Okay Movie', 'An okay movie with some interesting elements, but overall it was just average. Nothing extraordinary.', 'user4', 'tt0120915', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png');
-
--- User: user5
-INSERT INTO reviews (rating, title, body, user_username, movie_imdb_id, created_at, poster)
-VALUES
-(4, 'Great Drama', 'A great drama with an engaging story and strong performances. The film was well-crafted and enjoyable.', 'user5', 'tt0120917', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(5, 'Top Notch', 'Top-notch film with incredible direction and a captivating story. The performances were outstanding!', 'user5', 'tt0120919', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(3, 'Interesting but Flawed', 'An interesting movie with some flaws. The storyline had potential but didn’t fully deliver.', 'user5', 'tt0120920', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(2, 'Disappointing Watch', 'Disappointing watch with a lackluster plot and weak characters. Not up to expectations.', 'user5', 'tt0122213', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png'),
-(4, 'Highly Enjoyable', 'Highly enjoyable movie with great entertainment value. The cast did a fantastic job.', 'user5', 'tt0121111', CURRENT_TIMESTAMP, 'https://www.pngall.com/wp-content/uploads/2016/05/Film-Reel-Free-Download-PNG.png');
+(3, 'Okay Movie', 'An okay movie with some interesting elements, but overall it was just average. Nothing extraordinary.', 'user4', 'tt0120915', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BYTRhNjcwNWQtMGJmMi00NmQyLWE2YzItODVmMTdjNWI0ZDA2XkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_SX300.jpg'),
+(4, 'Great Drama', 'A great drama with an engaging story and strong performances. The film was well-crafted and enjoyable.', 'user5', 'tt0120917', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMjFkMzk2OWUtNjFmZC00ZTJhLTlkNGYtYjc2YWNkNmJmNzczXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'),
+(5, 'Top Notch', 'Top-notch film with incredible direction and a captivating story. The performances were outstanding!', 'user5', 'tt0120919', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BM2YwZTI0ZGYtMmM2MC00NjkwLWE0OGQtMjE5Njc2NzNjODMyXkEyXkFqcGdeQXVyMTk0NjE5NzY@._V1_SX300.jpg'),
+(3, 'Interesting but Flawed', 'An interesting movie with some flaws. The storyline had potential but didn’t fully deliver.', 'user5', 'tt0120920', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BMTY5MmMyNjUtMGZiZC00YjJiLTgxOWUtNzg4NTBlYmNiMTY3XkEyXkFqcGdeQXVyODU5ODY0ODc@._V1_SX300.jpg'),
+(2, 'Disappointing Watch', 'Disappointing watch with a lackluster plot and weak characters. Not up to expectations.', 'user5', 'tt0122213', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BN2Q2NjVkOGYtMzhjNy00YTk5LTg2OWYtOGRiNTk3OTQ4YmVkXkEyXkFqcGdeQXVyMTAwNzIyMzAy._V1_SX300.jpg'),
+(4, 'Highly Enjoyable', 'Highly enjoyable movie with great entertainment value. The cast did a fantastic job.', 'user5', 'tt0121111', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BZDkzYmFmNWMtNjExNi00YTQ0LWFiNWEtYzJlZjllYjhmMjhiXkEyXkFqcGdeQXVyMTIxMzMzMzE@._V1_SX300.jpg');
 
 
 
