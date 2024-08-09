@@ -46,7 +46,7 @@ router.patch('/:reviewId', async (req, res, next) => {
     }
 });
 
-/** delete a review */
+/** Delete a review */
 router.delete('/:reviewId', async(req, res, next) => {
     try {
         const reviewId = req.params.reviewId;
@@ -61,8 +61,20 @@ router.delete('/:reviewId', async(req, res, next) => {
     }
 });
 
+/** Get review by id */
+router.get('/:reviewId', async(req, res, next) => {
+    try{
+        const reviewId = req.params.reviewId;
+        const review = await Review.getReview(reviewId);
+        return res.json({review})
+
+    } catch(e){
+        return next(e);
+    }
+})
+
 /** Find all reviews made by a specific user */
-router.get('/:username', async(req, res, next)=> {
+router.get('/user/:username', async(req, res, next)=> {
     try{
         const username = req.params.username;
         console.log("Fetching reviews for username:", username);
@@ -125,6 +137,20 @@ router.get('/tags/:tagName', async(req, res, next)=> {
 
         return res.json({ taggedReviews });
     } catch(e){
+        return next(e)
+    }
+})
+
+/** Search for Reviews  based on the tag*/
+router.get('/search/tags', async(req, res, next) => {
+    console.log("Backend: Searching tags", req.query);
+    try{
+        const {term} = req.query;
+        const reviews = await Review.getReviewTags(term);
+        console.log("Backend: Tag search result", reviews);
+        return res.json({reviews})
+    } catch(e){
+        console.error("Backend: Tag search error", e);
         return next(e)
     }
 })

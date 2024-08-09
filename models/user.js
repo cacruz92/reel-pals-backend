@@ -189,6 +189,19 @@ class User {
         return user;
       }
 
+    static async search(term){
+        const result = await db.query(
+            `SELECT username, first_name, last_name
+            FROM users
+            WHERE username ILIKE $1
+            OR first_name ILIKE $1
+            OR last_name ILIKE $1
+            LIMIT 30`,
+            [`%${term}%`]
+        );
+        return result.rows;
+    }
+
       
 
       

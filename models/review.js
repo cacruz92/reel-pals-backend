@@ -206,6 +206,22 @@ class Review {
             throw new BadRequestError(`Error finding reviews for tag: ${tagName}`);
         }
     }
+
+    static async getReview(reviewId){
+        try{
+            let result = await db.query(
+                `SELECT * 
+                FROM reviews
+                WHERE id = $1`,
+                [reviewId]
+            )
+            let review = result.rows[0];
+            return review;
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError(`Error finding review: ${reviewId}`)
+        }
+    }
 }
 
 module.exports = Review;

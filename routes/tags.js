@@ -40,4 +40,8 @@ router.get('/all', async(req, res, next) => {
     }
 })
 
+/** GET 
+ * search for reviews associated with tag.
+ */
+
 module.exports = router;

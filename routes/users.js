@@ -51,6 +51,20 @@ router.post('/login', async (req, res, next) => {
     }
 });
 
+/** GET/ [searchTerm] => {users} */
+
+router.get('/search', async(req, res, next) => {
+    console.log("Backend: Searching users", req.query);
+    try{
+        const {term} = req.query;
+        const users = await User.search(term);
+        console.log("Backend: User search result", users);
+        return res.json({users});
+    } catch(e){
+        console.error("Backend: User search error", e);
+        return next(e);
+    }
+});
 
 /** GET /[username] => { user }
  *
