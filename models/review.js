@@ -4,8 +4,8 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Review {
     /** add a new review */
-    static async addReview({movie_imdb_id, user_username, rating, title, body}){
-        console.log("Adding review with data:", { rating, title, body, user_username, movie_imdb_id });
+    static async addReview({movie_imdb_id, user_username, rating, title, body, poster}){
+        console.log("Adding review with data:", { rating, title, body, user_username, movie_imdb_id, poster });
         try{
             const result = await db.query(
                 `INSERT INTO reviews
@@ -13,15 +13,17 @@ class Review {
                 title,
                 body,
                 user_username,
-                movie_imdb_id)
-                VALUES ($1, $2, $3, $4, $5)
-                RETURNING id, rating, title, user_username AS "user_username", movie_imdb_id AS "movie_Imbd_Id"`,
+                movie_imdb_id,
+                poster)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                RETURNING id, rating, title, user_username AS "user_username", movie_imdb_id AS "movie_Imbd_Id", poster`,
                 [
                     rating, 
                     title, 
                     body, 
                     user_username, 
-                    movie_imdb_id
+                    movie_imdb_id,
+                    poster
                 ]
             )
 
@@ -80,6 +82,16 @@ class Review {
 
     static async findUserReviews(user_username){
         try{
+            console.log("Searching for reviews of user:", user_username);
+            console.log("User username type:", typeof user_username);
+
+            let allReviews = await db.query(
+                `SELECT * FROM reviews`
+            );
+            console.log("All reviews:", allReviews.rows);
+
+            console.log("SQL Query:", `SELECT r.id, r.rating, r.title, r.body, r.user_username AS "user_username", r.created_at AS "createdAt", r.movie_imdb_id AS "movie_Imbd_Id" FROM reviews r WHERE r.user_username = '${user_username}' ORDER BY r.created_at DESC`);
+
             let result = await db.query(
             `SELECT r.id, 
                 r.rating, 
@@ -89,7 +101,6 @@ class Review {
                 r.created_at AS "createdAt", 
                 r.movie_imdb_id AS "movie_Imbd_Id"
             FROM reviews r
-            JOIN movies m ON r.movie_imdb_id = m.id
             WHERE r.user_username = $1
             ORDER BY r.created_at DESC`,
             [user_username]
@@ -97,12 +108,12 @@ class Review {
 
             const reviews = result.rows;
 
-            if(reviews.length === 0){
-                throw new NotFoundError(`No reviews found for user with id ${user_username}`);
-            }
+            console.log("Query result:", result.rows);
+
             return reviews;
         } catch (e){
             console.error("Database error:", e);
+            console.error("Error details:", e.message, e.stack);
             throw new BadRequestError("Error fetching reviews for user");
         }
     }

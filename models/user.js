@@ -23,7 +23,8 @@ class User {
                     email, 
                     first_name AS "firstName", 
                     last_name AS "lastName",
-                    birthday
+                    birthday,
+                    picture
             FROM users
             WHERE username = $1`,
             [username]
@@ -50,7 +51,7 @@ class User {
      * Throws BadRequestError on duplicates
     */
 
-    static async register({username, password, email, firstName, lastName, birthday}){
+    static async register({username, password, email, firstName, lastName, birthday, picture}){
         // check for duplicates
         const duplicateCheck = await db.query(
             `SELECT username
@@ -71,16 +72,18 @@ class User {
             email,
             first_name,
             last_name,
-            birthday)
-            VALUES ($1, $2, $3, $4, $5, $6 )
-            RETURNING username, email, first_name AS "firstName", last_name AS "lastName", birthday`,
+            birthday,
+            picture)
+            VALUES ($1, $2, $3, $4, $5, $6, $7 )
+            RETURNING username, email, first_name AS "firstName", last_name AS "lastName", birthday, picture`,
             [
                 username, 
                 hashedPassword, 
                 email, 
                 firstName, 
                 lastName, 
-                birthday
+                birthday,
+                picture
             ]
         )
 
@@ -107,7 +110,8 @@ class User {
                     email, 
                     first_name AS "firstName", 
                     last_name AS "lastName",
-                    birthday
+                    birthday,
+                    picture
             FROM users
             WHERE username = $1`,
             [username]
@@ -175,7 +179,8 @@ class User {
                                     first_name AS "firstName",
                                     last_name AS "lastName",
                                     email,
-                                    birthday`;
+                                    birthday,
+                                    picture`;
         const result = await db.query(querySql, [...values, username]);
         const user = result.rows[0];
     

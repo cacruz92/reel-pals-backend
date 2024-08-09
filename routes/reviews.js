@@ -13,13 +13,14 @@ const router = express.Router();
 router.post('/add', async(req, res,  next) => {
     try{
         console.log("Received review data:", req.body);
-        const {movie_imdb_id, username, rating, title, body} = req.body;
+        const {movie_imdb_id, username, rating, title, body, poster} = req.body;
         const review = await Review.addReview({
             rating, 
             title, 
             body, 
             movie_imdb_id, 
-            user_username: username 
+            user_username: username,
+            poster: 
         });
         
         return res.status(201).json({review})
@@ -61,15 +62,16 @@ router.delete('/:reviewId', async(req, res, next) => {
 });
 
 /** Find all reviews made by a specific user */
-router.get('/:userId', async(req, res, next)=> {
+router.get('/:username', async(req, res, next)=> {
     try{
-        const userId = req.params.userId;
-        const reviews = await Review.findUserReviews(userId);
-        if(!reviews){
-            throw new NotFoundError(`No reviews found for this user: ${userId}`)
-        }
+        const username = req.params.username;
+        console.log("Fetching reviews for username:", username);
+        console.log("Username type:", typeof username);
+        const reviews = await Review.findUserReviews(username);
+        console.log("Fetched reviews:", reviews);
         return res.json({ reviews });
     } catch(e) {
+        console.error("Error in route:", e.message, e.stack);
         return next(e)
     }
 })
