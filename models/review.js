@@ -16,7 +16,7 @@ class Review {
                 movie_imdb_id,
                 poster)
                 VALUES ($1, $2, $3, $4, $5, $6)
-                RETURNING id, rating, title, user_username AS "user_username", movie_imdb_id AS "movie_Imbd_Id", poster`,
+                RETURNING id, rating, title, user_username AS "user_username", movie_imdb_id AS "movie_imdb_id", poster`,
                 [
                     rating, 
                     title, 
@@ -52,7 +52,7 @@ class Review {
                           rating, 
                           title, 
                           user_username AS "user_username", 
-                          movie_imdb_id AS "movie_Imbd_Id"`;
+                          movie_imdb_id AS "movie_imdb_id"`;
         const result = await db.query(querySql, [...values, reviewId]);
         const review = result.rows[0];
     
@@ -85,12 +85,8 @@ class Review {
             console.log("Searching for reviews of user:", user_username);
             console.log("User username type:", typeof user_username);
 
-            let allReviews = await db.query(
-                `SELECT * FROM reviews`
-            );
-            console.log("All reviews:", allReviews.rows);
 
-            console.log("SQL Query:", `SELECT r.id, r.rating, r.title, r.body, r.user_username AS "user_username", r.created_at AS "createdAt", r.movie_imdb_id AS "movie_Imbd_Id" FROM reviews r WHERE r.user_username = '${user_username}' ORDER BY r.created_at DESC`);
+            console.log("SQL Query:", `SELECT r.id, r.rating, r.title, r.body, r.user_username AS "user_username", r.created_at AS "createdAt", r.movie_imdb_id AS "movie_imdb_id", r.poster FROM reviews r WHERE r.user_username = '${user_username}' ORDER BY r.created_at DESC`);
 
             let result = await db.query(
             `SELECT r.id, 
@@ -99,8 +95,11 @@ class Review {
                 r.body,
                 r.user_username AS "user_username", 
                 r.created_at AS "createdAt", 
-                r.movie_imdb_id AS "movie_Imbd_Id"
+                r.movie_imdb_id AS "movie_imdb_id",
+                r.poster,
+                m.title AS movie_title
             FROM reviews r
+            JOIN movies m ON r.movie_imdb_id = m.imdb_id
             WHERE r.user_username = $1
             ORDER BY r.created_at DESC`,
             [user_username]
@@ -191,7 +190,7 @@ class Review {
                     r.title,
                     r.body,
                     r.user_username AS "user_username",
-                    r.movie_imdb_id AS "movie_Imbd_Id",
+                    r.movie_imdb_id AS "movie_imdb_id",
                     r.created_at AS "createdAt"
                 FROM reviews r
                 JOIN review_tags rt ON r.id = rt.review_id

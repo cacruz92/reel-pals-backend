@@ -20,7 +20,7 @@ router.post('/add', async(req, res,  next) => {
             body, 
             movie_imdb_id, 
             user_username: username,
-            poster: 
+            poster 
         });
         
         return res.status(201).json({review})
