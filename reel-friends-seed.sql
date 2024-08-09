@@ -24,7 +24,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE follows (
-    following_username VARCHAR(255) REFERENCES users(username),
+    follower_username VARCHAR(255) REFERENCES users(username),
     followed_username VARCHAR(255) REFERENCES users(username),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (following_username, followed_username)

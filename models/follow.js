@@ -41,8 +41,8 @@ class Follow {
                 u.last_name AS "lastName",
                 f.created_at AS "followedSince" 
             FROM users u
-            JOIN follows f ON u.username = f.followed_username
-            WHERE u.username = $1
+            JOIN follows f ON f.followed_username = u.username
+            WHERE f.followed_username = $1
             ORDER BY f.created_at DESC`,
             [username]
             );
@@ -71,8 +71,8 @@ class Follow {
                 u.last_name AS "lastName",
                 f.created_at AS "followingSince" 
             FROM users u
-            JOIN follows f ON u.username = f.follower_username
-            WHERE u.username = $1
+            JOIN follows f ON f.follower_username = u.username
+            WHERE f.follower_username = $1
             ORDER BY f.created_at DESC`,
             [username]
             );
