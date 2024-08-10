@@ -255,4 +255,17 @@ router.delete('/:reviewId/like', async( req, res, next ) => {
     }
 })
 
+/** Get Feed of reviews from users followed */
+
+router.get('/feed/:username', async(req, res, next)=> {
+    try{
+        const username = req.params.username;
+        const feed = await Review.getFeedForUser(username);
+        return res.json({feed})
+    } catch(e) {
+        return next(e)
+    }
+})
+
+
 module.exports = router;

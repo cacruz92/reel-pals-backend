@@ -117,6 +117,33 @@ class Review {
         }
     }
 
+    /**Get feed for username
+     * generates a list of the 50 most recent posts by users we follow
+     */
+
+    static async getFeedForUser(username){
+        const result = await db.query(
+            `SELECT r.id,
+                r.rating,
+                r.title,
+                r.body,
+                r.user_username,
+                r.created_at,
+                r.movie_imdb_id,
+                r.poster,
+                m.title AS movie_title
+            FROM reviews r
+            JOIN follows f ON r.user_username = f.followed_username
+            JOIN movies m ON r.movie_imdb_id = m.imdb_id
+            WHERE f.follower_username = $1
+            ORDER BY r.created_at DESC
+            LIMIT 50`,
+            [username]
+        );
+        const feed = result.rows;
+        return feed;
+    }
+
     /** Add tag to a review
      * Updates the review_tags table
      */
