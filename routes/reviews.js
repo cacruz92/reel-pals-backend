@@ -63,6 +63,7 @@ router.delete('/:reviewId', async(req, res, next) => {
 
 /** Get review by id */
 router.get('/:reviewId', async(req, res, next) => {
+    console.log("GET /reviews/:reviewId route hit with reviewId:", req.params.reviewId);
     try{
         const reviewId = req.params.reviewId;
         const review = await Review.getReview(reviewId);

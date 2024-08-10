@@ -235,11 +235,22 @@ class Review {
     }
 
     static async getReview(reviewId){
+        console.log("Review.getReview called with reviewId:", reviewId);
         try{
             let result = await db.query(
-                `SELECT * 
-                FROM reviews
-                WHERE id = $1`,
+                `SELECT 
+                r.id, 
+                r.rating, 
+                r.title, 
+                r.body, 
+                r.user_username, 
+                r.created_at, 
+                r.movie_imdb_id, 
+                r.poster,
+                m.title AS movie_title
+                FROM reviews r
+                JOIN movies m ON r.movie_imdb_id = m.imdb_id
+                WHERE r.id = $1`,
                 [reviewId]
             )
             let review = result.rows[0];
