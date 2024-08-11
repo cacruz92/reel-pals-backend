@@ -38,7 +38,7 @@ class Follow {
     static async findUserFollowers(username){
         try{
             let result = await db.query(
-            `SELECT u.id,
+            `SELECT 
                 u.username, 
                 u.first_name AS "firstName", 
                 u.last_name AS "lastName",
@@ -58,7 +58,7 @@ class Follow {
             return followers;
         } catch (e){
             console.error("Database error:", e);
-            throw new BadRequestError("Error fetching followers for user");
+            return [];
         }
     }
 
@@ -72,9 +72,11 @@ class Follow {
                 u.username, 
                 u.first_name AS "firstName", 
                 u.last_name AS "lastName",
+                f.followed_username,
+                f.follower_username,
                 f.created_at AS "followerSince" 
             FROM users u
-            JOIN follows f ON f.follower_username = u.username
+            JOIN follows f ON f.followed_username = u.username
             WHERE f.follower_username = $1
             ORDER BY f.created_at DESC`,
             [username]
@@ -88,7 +90,7 @@ class Follow {
             return following;
         } catch (e){
             console.error("Database error:", e);
-            throw new BadRequestError("Error fetching user's followed accounts");
+            return [];
         }
     }
 
@@ -106,12 +108,29 @@ class Follow {
                 );
                 const follow = result.rows[0];
     
-                if (!follow) throw new NotFoundError(`Follow relationship not found`);
+                if (!follow){
+                    return null;
+                }
     
                 return follow; 
             } catch (e){
                 console.error("Database error:", e);
                 throw new BadRequestError("Error removing follow relationship");
+            }
+        }
+
+        static async findFollow(followerUsername, followedUsername) {
+            try {
+                const result = await db.query(
+                    `SELECT *
+                     FROM follows
+                     WHERE follower_username = $1 AND followed_username = $2`,
+                    [followerUsername, followedUsername]
+                );
+                return result.rows[0];
+            } catch (e) {
+                console.error("Database error:", e);
+                throw new BadRequestError("Error checking follow relationship");
             }
         }
 

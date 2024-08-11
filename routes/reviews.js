@@ -5,14 +5,14 @@ const {BadRequestError, NotFoundError} = require("../expressError");
 const Review = require("../models/review");
 const Comment = require("../models/comment");
 const Like = require("../models/like");
+const { authenticateJWT, ensureCorrectUser, ensureLoggedIn } = require("../middleware/auth");
 
 const router = express.Router();
 
 /** add a review */
 
-router.post('/add', async(req, res,  next) => {
+router.post('/add',  async(req, res,  next) => {
     try{
-        console.log("Received review data:", req.body);
         const {movie_imdb_id, username, rating, title, body, poster} = req.body;
         const review = await Review.addReview({
             rating, 
@@ -63,12 +63,18 @@ router.delete('/:reviewId', async(req, res, next) => {
 
 /** Get review by id */
 router.get('/:reviewId', async(req, res, next) => {
-    console.log("GET /reviews/:reviewId route hit with reviewId:", req.params.reviewId);
     try{
         const reviewId = req.params.reviewId;
+        const currentUser = req.user;
         const review = await Review.getReview(reviewId);
+        
+        if (currentUser){
+            review.is_liked_by_current_user = await Review.isLikedByUser(reviewId, currentUser);
+        } else{
+            review.is_liked_by_current_user = false;
+        }
+        
         return res.json({review})
-
     } catch(e){
         return next(e);
     }
@@ -78,10 +84,7 @@ router.get('/:reviewId', async(req, res, next) => {
 router.get('/user/:username', async(req, res, next)=> {
     try{
         const username = req.params.username;
-        console.log("Fetching reviews for username:", username);
-        console.log("Username type:", typeof username);
         const reviews = await Review.findUserReviews(username);
-        console.log("Fetched reviews:", reviews);
         return res.json({ reviews });
     } catch(e) {
         console.error("Error in route:", e.message, e.stack);
@@ -90,7 +93,7 @@ router.get('/user/:username', async(req, res, next)=> {
 })
 
 /** Add tag to a review */
-router.post('/:reviewId/tag', async(req, res, next) => {
+router.post('/:reviewId/tag',  async(req, res, next) => {
     try {
         const reviewId = req.params.reviewId;
         const {tagName} = req.body;
@@ -144,11 +147,9 @@ router.get('/tags/:tagName', async(req, res, next)=> {
 
 /** Search for Reviews  based on the tag*/
 router.get('/search/tags', async(req, res, next) => {
-    console.log("Backend: Searching tags", req.query);
     try{
         const {term} = req.query;
         const reviews = await Review.getReviewTags(term);
-        console.log("Backend: Tag search result", reviews);
         return res.json({reviews})
     } catch(e){
         console.error("Backend: Tag search error", e);
@@ -165,11 +166,18 @@ router.get('/search/tags', async(req, res, next) => {
 
 router.post('/:reviewId/comments/add', async(req, res,  next) => {
     try{
-        const {userId, body} = req.body;
-        const reviewId = req.params.reviewId;
-        const comment = await Comment.addComment(userId, reviewId, body);
+        const {body} = req.body;
+        const {reviewId} = req.params
+        const username = req.user.username;
+
+        if(!body || body.trim() === ""){
+            throw new BadRequestError("comment cannot be empty")
+        }
+
+        const comment = await Comment.addComment(username, reviewId, body);
         return res.status(201).json({comment})
     }catch (e){
+        console.error("Error adding comment:", e);
         return next(e);
     }
 });
@@ -194,8 +202,8 @@ router.patch('/:reviewId/comments/:commentId', async (req, res, next) => {
 
 router.delete('/:reviewId/comments/:commentId', async(req, res, next) => {
     try {
-        const { reviewId, commentId } = req.params;
-        const deletedComment = await Comment.removeComment(reviewId, commentId);
+        const commentId = req.params.commentId;
+        const deletedComment = await Comment.removeComment(commentId);
 
         if(!deletedComment){
             throw new NotFoundError(`Comment with id ${commentId} not found`)
@@ -231,13 +239,14 @@ router.get('/:reviewId/comments', async(req, res, next)=> {
 
 /** Adds a new like to a review. **/
 
-router.post('/:reviewId/like', async(req, res, next) => {
+router.post('/:reviewId/like',  async(req, res, next) => {
     try{
-        const {userId} = req.body;
+        const username = req.user.username;
         const reviewId = req.params.reviewId;
-        const like = await Like.addLike(userId, reviewId);
+        const like = await Like.addLike(username, reviewId);
         return res.status(201).json({like})  
     } catch(e){
+        console.error("Error adding like:", e);
         next(e)
     }
 })
@@ -247,9 +256,9 @@ router.post('/:reviewId/like', async(req, res, next) => {
 
 router.delete('/:reviewId/like', async( req, res, next ) => {
     try{
-        const {userId} = req.body;
+        const username = req.user.username;
         const reviewId = req.params.reviewId;
-        const removed = await Like.removeLike(userId, reviewId);
+        const removed = await Like.removeLike(username, reviewId);
         return res.json({removed})
     } catch(e){
         return next(e)

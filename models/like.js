@@ -9,29 +9,18 @@ const {
 class Like{
     /** Add Like
      * adds like to a review
-     * returns { user_id, review_id}
+     * returns { user_username, review_id}
      */
 
-    static async addLike(userId, reviewId){
-
-        //check for duplicates
-        const duplicateCheck = await db.query(
-            `SELECT id
-            FROM likes
-            WHERE user_id = $1 AND review_id = $2`,
-            [userId, reviewId]
-        )
-        if(duplicateCheck.rows[0]){
-            throw new BadRequestError("User has already liked this review")
-        }
+    static async addLike(username, reviewId){
 
         const result = await db.query(
             `INSERT INTO likes
-            (user_id,
+            (user_username,
             review_id)
             VALUES ($1, $2)
-            RETURNING user_id AS "userId", review_id AS "reviewId"`,
-            [userId, reviewId]
+            RETURNING user_username AS "username", review_id AS "reviewId"`,
+            [username, reviewId]
         )
 
         const like = result.rows[0];
@@ -41,26 +30,21 @@ class Like{
 
      /** Delete Like
      * deletes an existing like
-     * returns { user_id, review_id }
+     * returns { user_username, review_id }
      * Throws NotFoundError on duplicates
      */
 
-    static async removeLike(userId, reviewId){
+    static async removeLike(username, reviewId){
 
         let result = await db.query(
             `DELETE
             FROM likes
-            WHERE user_id = $1 AND review_id = $2
-            RETURNING user_id AS "userId", review_id AS "reviewId"`,
-            [userId, reviewId],
+            WHERE user_username = $1 AND review_id = $2
+            RETURNING user_username AS "username", review_id AS "reviewId"`,
+            [username, reviewId],
         );
-        const like = result.rows[0];
-
-        if (!like) throw new NotFoundError(`This like no longer exists`);
-
-        return like; 
+        return result.rows[0];
     }
-
 }
 
 module.exports = Like;

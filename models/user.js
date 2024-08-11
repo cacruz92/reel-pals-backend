@@ -10,7 +10,7 @@ const {
 } = require("../expressError")
 
 class User {
-    /**  authenticate user with username, password.
+    /**  Authenticate user with username, password.
     *returns {username, first_name, last_name, email, birthday}
     * throws UnauthorizedError if user not found or wrong password
     **/
@@ -32,21 +32,20 @@ class User {
         
         const user = result.rows[0];
 
-        if (user) {
-            const isValid = await bcrypt.compare(password, user.hashed_password)
-            if(isValid){
-                delete user.hashed_password;
-                return user;
-            }
+        if (user && await bcrypt.compare(password, user.hashed_password)) {
+            delete user.hashed_password;
+            const token = User.generateToken(user)
+            return {user, token};
         }
+
         throw new UnauthorizedError("Invalid username/password")
     }catch(e){
         console.error("Database error:", e);
-        throw new UnauthorizedError("Login Failed")
+        throw e;
     }
     }
 
-    /** register user with data
+    /** Register user with data
      * returns {username, first_name, last_name, email, birthday}
      * Throws BadRequestError on duplicates
     */
@@ -90,13 +89,24 @@ class User {
         const user = result.rows[0];
         return user;
     }
-
+    /** Generate a token for a user */
     static generateToken(user){
         const payload = {
             username: user.username,
-            email: user.email
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
         };
-        return jwt.sign(payload, JWT_SECRET, {expiresIn: '24h'})
+        return jwt.sign(payload, JWT_SECRET)
+    }
+    /** Verify the token  */
+    static verifyToken(token) {
+        try {
+            const payload = jwt.verify(token, JWT_SECRET);
+            return payload;
+        } catch (err) {
+            throw new UnauthorizedError('Invalid token');
+        }
     }
 
     /** find a user by the username given

@@ -67,7 +67,7 @@ CREATE TABLE reviews (
 
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
+    user_username VARCHAR REFERENCES users(user_username),
     review_id INTEGER REFERENCES reviews(id),
     body TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -85,10 +85,10 @@ CREATE TABLE review_tags (
 );
 
 CREATE TABLE likes (
-    user_id INTEGER REFERENCES users(id),
+    user_username VARCHAR REFERENCES users(user_username),
     review_id INTEGER REFERENCES reviews(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, review_id)
+    PRIMARY KEY (user_username, review_id)
 );
 
 INSERT INTO users (username, email, hashed_password, first_name, last_name, birthday, picture, created_at)

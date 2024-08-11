@@ -5,8 +5,7 @@ const {BadRequestError} = require("../expressError");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Follow = require("../models/follow");
-const jwt = require("jsonwebtoken");
-const {JWT_SECRET} = require("../config");
+const { authenticateJWT, ensureCorrectUser, ensureLoggedIn } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -40,12 +39,12 @@ router.post('/register', async (req, res, next) => {
  **/
 
 router.post('/login', async (req, res, next) => {
-    try{
-        const {username, password} = req.body;
-        const user = await User.authenticate(username, password);
-        const token = User.generateToken(user);
-        return res.json({user, token})
-    } catch(e){
+    try {
+        const { username, password } = req.body;
+        const { user, token } = await User.authenticate(username, password);
+        res.set('Authorization', `Bearer ${token}`);
+        return res.json({ user, token });
+    } catch(e) {
         console.error("Login error:", e);
         return next(e);
     }
@@ -54,11 +53,9 @@ router.post('/login', async (req, res, next) => {
 /** GET/ [searchTerm] => {users} */
 
 router.get('/search', async(req, res, next) => {
-    console.log("Backend: Searching users", req.query);
     try{
         const {term} = req.query;
         const users = await User.search(term);
-        console.log("Backend: User search result", users);
         return res.json({users});
     } catch(e){
         console.error("Backend: User search error", e);
@@ -156,10 +153,15 @@ router.get('/:username/comments', async(req, res, next)=> {
 router.post('/:username/follow', async(req, res, next) => {
     try{
         const followedUsername = req.params.username; 
-        const {followerUsername} = req.body;
+        const followerUsername = req.user.username;
+        const existingFollow = await Follow.findFollow(followerUsername, followedUsername);
+        if (existingFollow) {
+            return res.status(400).json({ error: "Already following this user" });
+        }
         const newFollow = await Follow.followUser(followerUsername, followedUsername);
         return res.status(201).json({follow: newFollow})  
     } catch(e){
+        console.error("Error following user:", e);
         return next(e)
     }
 })
@@ -216,7 +218,7 @@ router.get('/:username/following', async(req, res, next) => {
 router.delete('/:username/follow', async( req, res, next ) => {
     try{
         const followedUsername = req.params.username;
-        const {followerUsername} = req.body;
+        const followerUsername = req.user.username;
         const removedFollow = await Follow.removeFollow( followerUsername, followedUsername );
         return res.json({removedFollow})
     } catch(e){

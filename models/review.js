@@ -1,11 +1,10 @@
 const db = require("../db");
-const { BadRequestError } = require("../expressError")
+const { BadRequestError, NotFoundError } = require("../expressError")
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Review {
     /** add a new review */
     static async addReview({movie_imdb_id, user_username, rating, title, body, poster}){
-        console.log("Adding review with data:", { rating, title, body, user_username, movie_imdb_id, poster });
         try{
             const result = await db.query(
                 `INSERT INTO reviews
@@ -82,13 +81,7 @@ class Review {
 
     static async findUserReviews(user_username){
         try{
-            console.log("Searching for reviews of user:", user_username);
-            console.log("User username type:", typeof user_username);
-
-
-            console.log("SQL Query:", `SELECT r.id, r.rating, r.title, r.body, r.user_username AS "user_username", r.created_at AS "createdAt", r.movie_imdb_id AS "movie_imdb_id", r.poster FROM reviews r WHERE r.user_username = '${user_username}' ORDER BY r.created_at DESC`);
-
-            let result = await db.query(
+           let result = await db.query(
             `SELECT r.id, 
                 r.rating, 
                 r.title, 
@@ -106,8 +99,6 @@ class Review {
             );
 
             const reviews = result.rows;
-
-            console.log("Query result:", result.rows);
 
             return reviews;
         } catch (e){
@@ -234,8 +225,45 @@ class Review {
         }
     }
 
+    /** Get like count for a review */
+    
+    static async getLikesCount(reviewId){
+        try{
+            const result = await db.query(
+                `SELECT COUNT(*) as like_count
+                FROM likes
+                WHERE review_id = $1`,
+                [reviewId]
+            );
+            return parseInt(result.rows[0].like_count);
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError(`Error retrieving like count for review: ${reviewId}`)
+        }
+    }
+
+    /** Find out if review has been liked by user already */
+    
+    static async isLikedByUser(reviewId, username){
+        try{
+            const result = await db.query(
+                `SELECT EXISTS(
+                    SELECT 1
+                    FROM likes 
+                    WHERE review_id = $1 AND user_username = $2
+                ) as is_liked`,
+                [reviewId, username]
+            );
+            return result.rows[0].is_liked;
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError(`Error checking if review has been liked: ${reviewId}`)
+        }
+    }
+
+    /** Get review by review id */
+
     static async getReview(reviewId){
-        console.log("Review.getReview called with reviewId:", reviewId);
         try{
             let result = await db.query(
                 `SELECT 
@@ -254,10 +282,40 @@ class Review {
                 [reviewId]
             )
             let review = result.rows[0];
+
+            if(!review){
+                throw new NotFoundError(`Review not found: ${reviewId}`);
+            }
+
+            review.likes_count = await this.getLikesCount(reviewId);
+            review.comments = await this.getReviewComments(reviewId);
+            
             return review;
         }catch(e){
             console.error("Database error:", e);
             throw new BadRequestError(`Error finding review: ${reviewId}`)
+        }
+    };
+
+    /** Gets the comments for a particular review */
+    static async getReviewComments(reviewId){
+        try{
+            let result = await db.query(
+                `SELECT c.id,
+                    c.body,
+                    c.created_at,
+                    c.user_username,
+                    u.username as user_username
+                FROM comments c
+                JOIN users u ON c.user_username = u.username
+                WHERE c.review_id = $1
+                ORDER BY c.created_at DESC`,
+                [reviewId]
+            );
+            return result.rows;
+        }catch(e){
+            console.error("Database error:", e);
+            throw new BadRequestError(`Error finding comments for review: ${reviewId}`)
         }
     }
 }

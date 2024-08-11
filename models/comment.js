@@ -9,19 +9,19 @@ const {
 class Comment{
     /** Add Comment
      * adds comment to a review
-     * returns { user_id, review_id, body}
+     * returns { user_username, review_id, body}
      */
 
-    static async addComment(userId, reviewId, body){
+    static async addComment(username, reviewId, body){
 
         const result = await db.query(
             `INSERT INTO comments
-            (user_id,
+            (user_username,
             review_id,
             body)
             VALUES ($1, $2, $3)
-            RETURNING user_id AS "userId", review_id AS "reviewId", body`,
-            [userId, reviewId, body]
+            RETURNING user_username AS "username", review_id AS "reviewId", body`,
+            [username, reviewId, body]
         )
 
         const comment = result.rows[0];
@@ -31,7 +31,7 @@ class Comment{
 
     /** Edit Comment
      * edits and existing comment
-     * returns { user_id, review_id, body}
+     * returns { user_username, review_id, body}
      * Throws NotFoundError on duplicates
      */
 
@@ -49,7 +49,7 @@ class Comment{
         const { setCols, values } = sqlForPartialUpdate(
             data,
             {
-                userId: "user_id",
+                username: "user_username",
                 reviewId: "review_id"
             });
         const commentVarIdx = "$" + (values.length + 1);
@@ -57,7 +57,7 @@ class Comment{
         const querySql = `UPDATE comments 
                           SET ${setCols} 
                           WHERE id = ${commentVarIdx} 
-                          RETURNING id, user_id AS "userId", review_id AS "reviewId", body, created_at AS "createdAt"`;
+                          RETURNING id, user_username AS "username", review_id AS "reviewId", body, created_at AS "createdAt"`;
         const result = await db.query(querySql, [...values, commentId]);
         const comment = result.rows[0];
     
@@ -69,18 +69,18 @@ class Comment{
 
     /** Delete Comment
      * deletes an existing comment
-     * returns { user_id, review_id }
+     * returns { user_username, review_id }
      * Throws NotFoundError on duplicates
      */
 
-    static async removeComment(reviewId, commentId){
+    static async removeComment(commentId){
 
         let result = await db.query(
             `DELETE
             FROM comments
-            WHERE id = $1 AND review_id = $2
-            RETURNING user_id AS "userId", review_id AS "reviewId"`,
-            [commentId, reviewId],
+            WHERE id = $1
+            RETURNING user_username AS "username", review_id AS "reviewId"`,
+            [commentId],
         );
         const comment = result.rows[0];
 
@@ -94,17 +94,17 @@ class Comment{
      * returns comments
      */
 
-    static async findUserComments(userId){
+    static async findUserComments(username){
         const result = await db.query(
             `SELECT id,
-            user_id AS "userId",
+            user_username AS "username",
             review_id AS "reviewId",
             body,
             created_at AS createdAt
             FROM comments
-            WHERE user_id = $1
+            WHERE user_username = $1
             ORDER BY created_at DESC`,
-            [userId]
+            [username]
         );
 
         return result.rows;
@@ -117,7 +117,7 @@ class Comment{
     static async findReviewComments(reviewId){
         const result = await db.query(
             `SELECT id,
-            user_id AS "userId",
+            user_username AS "username",
             review_id AS "reviewId",
             body,
             created_at AS createdAt
