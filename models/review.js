@@ -3,7 +3,7 @@ const { BadRequestError, NotFoundError } = require("../expressError")
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
 class Review {
-    /** add a new review */
+    /** Add a new review */
     static async addReview({movie_imdb_id, user_username, rating, title, body, poster}){
         try{
             const result = await db.query(
@@ -34,7 +34,7 @@ class Review {
         }
     }
 
-    /** edit a review */
+    /** Edit a review */
 
     static async editReview(reviewId, data) {
          const { setCols, values } = sqlForPartialUpdate(
@@ -60,7 +60,7 @@ class Review {
         return review;
       }
 
-    /** delete a review */
+    /** Delete a review */
 
     static async removeReview(reviewId) {
         let result = await db.query(
@@ -77,7 +77,7 @@ class Review {
         return review; 
     }
 
-    /** find all reviews made by a specific user */
+    /** Find all reviews made by a specific user */
 
     static async findUserReviews(user_username){
         try{

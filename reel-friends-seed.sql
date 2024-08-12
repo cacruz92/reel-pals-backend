@@ -155,6 +155,19 @@ VALUES
 (2, 'Disappointing Watch', 'Disappointing watch with a lackluster plot and weak characters. Not up to expectations.', 'user5', 'tt0122213', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BN2Q2NjVkOGYtMzhjNy00YTk5LTg2OWYtOGRiNTk3OTQ4YmVkXkEyXkFqcGdeQXVyMTAwNzIyMzAy._V1_SX300.jpg'),
 (4, 'Highly Enjoyable', 'Highly enjoyable movie with great entertainment value. The cast did a fantastic job.', 'user5', 'tt0121111', CURRENT_TIMESTAMP, 'https://m.media-amazon.com/images/M/MV5BZDkzYmFmNWMtNjExNi00YTQ0LWFiNWEtYzJlZjllYjhmMjhiXkEyXkFqcGdeQXVyMTIxMzMzMzE@._V1_SX300.jpg');
 
+ALTER TABLE likes
+DROP CONSTRAINT likes_review_id_fkey,
+ADD CONSTRAINT likes_review_id_fkey
+    FOREIGN KEY (review_id)
+    REFERENCES reviews(id)
+    ON DELETE CASCADE;
+
+ALTER TABLE comments
+DROP CONSTRAINT comments_review_id_fkey,
+ADD CONSTRAINT comments_review_id_fkey
+    FOREIGN KEY (review_id)
+    REFERENCES reviews(id)
+    ON DELETE CASCADE;
 
 
 CREATE DATABASE reel_pals_test;

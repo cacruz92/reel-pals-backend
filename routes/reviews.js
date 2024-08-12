@@ -92,71 +92,6 @@ router.get('/user/:username', async(req, res, next)=> {
     }
 })
 
-/** Add tag to a review */
-router.post('/:reviewId/tag',  async(req, res, next) => {
-    try {
-        const reviewId = req.params.reviewId;
-        const {tagName} = req.body;
-        const tagReview = await Review.addTagToReview(reviewId, tagName);
-        return res.json({taggedReview: tagReview})
-    } catch(e){
-        return next(e);
-    }
-})
-
-/** Remove tag from a review */
-router.delete('/:reviewId/tag/:tagName', async(req, res, next) => {
-    try {
-        const {reviewId, tagName} = req.params;
-        const removedTag = await Review.removeTagFromReview(reviewId, tagName);
-        return res.json({removed: removedTag})
-    } catch(e){
-        return next(e);
-    }
-})
-
-/** Get the tags associated with a specific review */
-router.get('/:reviewId/tags', async(req, res, next)=> {
-    try{
-        const reviewId = req.params.reviewId;
-        const tags = await Review.getReviewTags(reviewId);
-        if(!tags){
-            throw new NotFoundError(`No tags found for this review: ${reviewId}`)
-        }
-        return res.json({tags});
-    } catch(e) {
-        return next(e)
-    }
-})
-
-/** Get the reviews associated with a specific tag */
-router.get('/tags/:tagName', async(req, res, next)=> {
-    try {
-        const tagName = req.params.tagName;
-        const taggedReviews = await Review.getReviewsByTags(tagName);
-
-        if(!taggedReviews){
-            throw new NotFoundError(`Error finding reviews for tag: ${tagName}`)
-        }
-
-        return res.json({ taggedReviews });
-    } catch(e){
-        return next(e)
-    }
-})
-
-/** Search for Reviews  based on the tag*/
-router.get('/search/tags', async(req, res, next) => {
-    try{
-        const {term} = req.query;
-        const reviews = await Review.getReviewTags(term);
-        return res.json({reviews})
-    } catch(e){
-        console.error("Backend: Tag search error", e);
-        return next(e)
-    }
-})
-
 //Comment routes
 /** These are nested within reviews because it allows for better routing
  * as comments are only relevant to reviews
@@ -277,5 +212,16 @@ router.get('/feed/:username', async(req, res, next)=> {
     }
 })
 
+/** Get Like count */
+
+router.get('/:reviewId/likes', async (req, res, next) => {
+    try {
+        const reviewId = req.params.reviewId;
+        const likeCount = await Review.getLikesCount(reviewId);
+        return res.json({ likeCount });
+    } catch (e) {
+        return next(e);
+    }
+});
 
 module.exports = router;
