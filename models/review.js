@@ -135,96 +135,6 @@ class Review {
         return feed;
     }
 
-    /** Add tag to a review
-     * Updates the review_tags table
-     */
-
-    static async addTagToReview(reviewId, tagName){
-        try{
-            let result = await db.query(
-                `INSERT INTO review_tags
-                (review_id, name)
-                VALUES ($1, $2)
-                RETURNING id, review_id AS "reviewId", name AS "tagName"`,
-                [reviewId, tagName]
-            )
-            let tag = result.rows[0];
-            return tag;
-        }catch(e){
-            console.error("Database error:", e);
-            throw new BadRequestError("Error adding tag to review");
-        }
-    }
-
-    /** Remove a tag from a review
-     * Updates the review_tags table
-     */
-
-    static async removeTagFromReview(reviewId, tagName){
-        try{
-            let result = await db.query(
-                `DELETE FROM review_tags
-                WHERE review_id = $1 AND tag_name = $2
-                RETURNING id, review_id AS "reviewId", name AS "tagName"`,
-                [reviewId, tagName]
-            )
-            let tag = result.rows[0];
-            return tag;
-        }catch(e){
-            console.error("Database error:", e);
-            throw new BadRequestError("Error adding tag to review");
-        }
-    }
-
-    /** Get the tags associated with a specific review */
-
-    static async getReviewTags(reviewId){
-        try{
-            let result = await db.query(
-                `SELECT t.id,
-                    t.name
-                FROM tags t
-                JOIN review_tags rt ON t.name = rt.tag_name
-                WHERE rt.review_id = $1
-                ORDER BY t.name`,
-                [reviewId]
-            );
-            let tags = result.rows;
-            return tags;
-            
-        }catch(e){
-            console.error("Database error:", e);
-            throw new BadRequestError(`Error finding tags for review: ${reviewId}`);
-        }
-    }
-
-    /** Get the reviews associated with a specific tag */
-
-    static async getReviewsByTags(tagName){
-        try{
-            let result = await db.query(
-                `SELECT r.id,
-                    r.rating,
-                    r.title,
-                    r.body,
-                    r.user_username AS "user_username",
-                    r.movie_imdb_id AS "movie_imdb_id",
-                    r.created_at AS "createdAt"
-                FROM reviews r
-                JOIN review_tags rt ON r.id = rt.review_id
-                WHERE rt.tag_name = $1
-                ORDER BY r.created_at DESC`,
-                [tagName]
-            );
-            let reviews = result.rows;
-            return reviews;
-
-        }catch(e){
-            console.error("Database error:", e);
-            throw new BadRequestError(`Error finding reviews for tag: ${tagName}`);
-        }
-    }
-
     /** Get like count for a review */
     
     static async getLikesCount(reviewId){
@@ -316,6 +226,35 @@ class Review {
         }catch(e){
             console.error("Database error:", e);
             throw new BadRequestError(`Error finding comments for review: ${reviewId}`)
+        }
+    }
+
+    /** Get reviews for a specific movie */
+    static async getMovieReviews(movie_imdb_id) {
+        try {
+            const result = await db.query(
+                `SELECT r.id, 
+                    r.rating, 
+                    r.title, 
+                    r.body,
+                    r.user_username, 
+                    r.created_at AS "createdAt", 
+                    r.movie_imdb_id,
+                    r.poster,
+                    m.title AS movie_title
+                FROM reviews r
+                JOIN movies m ON r.movie_imdb_id = m.imdb_id
+                WHERE r.movie_imdb_id = $1
+                ORDER BY r.created_at DESC`,
+                [movie_imdb_id]
+            );
+
+            const reviews = result.rows;
+
+            return reviews;
+        } catch (e) {
+            console.error("Database error:", e);
+            throw new BadRequestError("Error fetching reviews for movie");
         }
     }
 }

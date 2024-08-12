@@ -11,7 +11,7 @@ const router = express.Router();
 
 /** add a review */
 
-router.post('/add',  async(req, res,  next) => {
+router.post('/add', authenticateJWT, ensureLoggedIn, async(req, res,  next) => {
     try{
         const {movie_imdb_id, username, rating, title, body, poster} = req.body;
         const review = await Review.addReview({
@@ -91,6 +91,17 @@ router.get('/user/:username', async(req, res, next)=> {
         return next(e)
     }
 })
+
+/** Get reviews for a specific movie */
+router.get('/movie/:movie_imdb_id', async (req, res, next) => {
+    try {
+        const movie_imdb_id = req.params.movie_imdb_id;
+        const reviews = await Review.getMovieReviews(movie_imdb_id);
+        return res.json({ reviews });
+    } catch (e) {
+        return next(e);
+    }
+});
 
 //Comment routes
 /** These are nested within reviews because it allows for better routing
