@@ -5,7 +5,7 @@ const {BadRequestError, UnauthorizedError} = require("../expressError");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Follow = require("../models/follow");
-const { authenticateJWT, ensureCorrectUser, ensureLoggedIn } = require("../middleware/auth");
+const { authenticateJWT, ensureLoggedIn } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -87,7 +87,12 @@ router.get('/:username', authenticateJWT, ensureLoggedIn, async (req, res, next)
  * Authorization required: same-user-as-:username
  **/
 
-router.post('/:username/verify-password', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async (req, res, next) => {
+console.log('authenticateJWT:', authenticateJWT);
+console.log('ensureLoggedIn:', ensureLoggedIn);
+console.log('User.verifyPassword:', User.verifyPassword);
+
+
+router.post('/:username/verify-password', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
     try {
         const { username } = req.params;
         const { password } = req.body;
@@ -108,7 +113,7 @@ router.post('/:username/verify-password', authenticateJWT, ensureLoggedIn, ensur
  * Authorization required: same-user-as-:username
  **/
 
-router.patch('/:username', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async (req, res, next) => {
+router.patch('/:username', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
     try{
         const username = req.params.username;
         const data = req.body;

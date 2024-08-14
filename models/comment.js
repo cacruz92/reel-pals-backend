@@ -20,7 +20,7 @@ class Comment{
             review_id,
             body)
             VALUES ($1, $2, $3)
-            RETURNING user_username AS "username", review_id AS "reviewId", body`,
+            RETURNING id, user_username AS "username", review_id AS "reviewId", body`,
             [username, reviewId, body]
         )
 
@@ -35,16 +35,7 @@ class Comment{
      * Throws NotFoundError on duplicates
      */
 
-    static async editComment(commentId, {reviewId, ...data}){
-
-        const checkComment = await db.query(
-            `SELECT id FROM comments WHERE id = $1 AND review_id = $2`,
-            [commentId, reviewId]
-        );
-    
-        if (checkComment.rows.length === 0) {
-            throw new NotFoundError(`Comment not found or does not belong to the specified review`);
-        }
+    static async editComment(commentId, data){
 
         const { setCols, values } = sqlForPartialUpdate(
             data,
@@ -89,26 +80,6 @@ class Comment{
         return comment; 
     }
 
-
-    /** Finds all comments made by a particular user
-     * returns comments
-     */
-
-    static async findUserComments(username){
-        const result = await db.query(
-            `SELECT id,
-            user_username AS "username",
-            review_id AS "reviewId",
-            body,
-            created_at AS createdAt
-            FROM comments
-            WHERE user_username = $1
-            ORDER BY created_at DESC`,
-            [username]
-        );
-
-        return result.rows;
-    }
 
     /** Finds all comments made on a specific post
      * returns comments

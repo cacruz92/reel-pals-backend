@@ -17,7 +17,7 @@ class Follow {
                 (follower_username,
                 followed_username)
                 VALUES ($1, $2)
-                RETURNING follower_username AS followerUsername, followed_username AS followedUsername`,
+                RETURNING follower_username AS "followerUsername", followed_username AS "followedUsername"`,
                 [followerUsername, followedUsername]
             )
 
@@ -44,7 +44,7 @@ class Follow {
                 u.last_name AS "lastName",
                 f.created_at AS "followedSince" 
             FROM users u
-            JOIN follows f ON f.followed_username = u.username
+            JOIN follows f ON f.follower_username = u.username
             WHERE f.followed_username = $1
             ORDER BY f.created_at DESC`,
             [username]
@@ -118,22 +118,6 @@ class Follow {
                 throw new BadRequestError("Error removing follow relationship");
             }
         }
-
-        static async findFollow(followerUsername, followedUsername) {
-            try {
-                const result = await db.query(
-                    `SELECT *
-                     FROM follows
-                     WHERE follower_username = $1 AND followed_username = $2`,
-                    [followerUsername, followedUsername]
-                );
-                return result.rows[0];
-            } catch (e) {
-                console.error("Database error:", e);
-                throw new BadRequestError("Error checking follow relationship");
-            }
-        }
-
 }
 
 module.exports = Follow;

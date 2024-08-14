@@ -228,7 +228,7 @@ class User {
 
     static async search(term){
         const result = await db.query(
-            `SELECT username, first_name, last_name
+            `SELECT username, first_name AS "firstName", last_name AS "lastName"
             FROM users
             WHERE username ILIKE $1
             OR first_name ILIKE $1

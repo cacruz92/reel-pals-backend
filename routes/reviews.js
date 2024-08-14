@@ -5,7 +5,7 @@ const {BadRequestError, NotFoundError} = require("../expressError");
 const Review = require("../models/review");
 const Comment = require("../models/comment");
 const Like = require("../models/like");
-const { authenticateJWT, ensureCorrectUser, ensureLoggedIn } = require("../middleware/auth");
+const { authenticateJWT, ensureLoggedIn } = require("../middleware/auth");
 
 const router = express.Router();
 
@@ -130,7 +130,7 @@ router.post('/:reviewId/comments/add', authenticateJWT, ensureLoggedIn, async(re
 
 /** Edit a comment */
 
-router.patch('/:reviewId/comments/:commentId', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async (req, res, next) => {
+router.patch('/:reviewId/comments/:commentId', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
     try{
         const { reviewId, commentId } = req.params;
         const data = req.body;
@@ -146,7 +146,7 @@ router.patch('/:reviewId/comments/:commentId', authenticateJWT, ensureLoggedIn, 
 
 /** Delete a comment */
 
-router.delete('/:reviewId/comments/:commentId', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async(req, res, next) => {
+router.delete('/:reviewId/comments/:commentId', authenticateJWT, ensureLoggedIn, async(req, res, next) => {
     try {
         const commentId = req.params.commentId;
         const deletedComment = await Comment.removeComment(commentId);
@@ -213,7 +213,7 @@ router.delete('/:reviewId/like', authenticateJWT, ensureLoggedIn, async( req, re
 
 /** Get Feed of reviews from users followed */
 
-router.get('/feed/:username', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async(req, res, next)=> {
+router.get('/feed/:username', authenticateJWT, ensureLoggedIn, async(req, res, next)=> {
     try{
         const username = req.params.username;
         const feed = await Review.getFeedForUser(username);

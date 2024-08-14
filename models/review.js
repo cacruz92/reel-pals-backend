@@ -15,7 +15,7 @@ class Review {
                 movie_imdb_id,
                 poster)
                 VALUES ($1, $2, $3, $4, $5, $6)
-                RETURNING id, rating, title, user_username AS "user_username", movie_imdb_id AS "movie_imdb_id", poster`,
+                RETURNING id, rating, body, title, user_username AS "user_username", movie_imdb_id AS "movie_imdb_id", poster`,
                 [
                     rating, 
                     title, 
@@ -49,8 +49,9 @@ class Review {
                           WHERE id = ${reviewIdVarIdx} 
                           RETURNING id, 
                           rating, 
-                          title, 
-                          user_username AS "user_username", 
+                          title,
+                          body,
+                          user_username, 
                           movie_imdb_id AS "movie_imdb_id"`;
         const result = await db.query(querySql, [...values, reviewId]);
         const review = result.rows[0];

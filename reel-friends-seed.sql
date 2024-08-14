@@ -73,17 +73,6 @@ CREATE TABLE comments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE tags (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL
-);
-
-CREATE TABLE review_tags (
-    id SERIAL PRIMARY KEY,
-    tag_name VARCHAR(255) REFERENCES tags(name),
-    review_id INTEGER REFERENCES reviews(id)
-);
-
 CREATE TABLE likes (
     user_username VARCHAR REFERENCES users(user_username),
     review_id INTEGER REFERENCES reviews(id),
