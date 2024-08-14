@@ -30,6 +30,7 @@ class User {
             [username]
         );
         
+        
         const user = result.rows[0];
 
         if (user && await bcrypt.compare(password, user.hashed_password)) {
@@ -64,6 +65,9 @@ class User {
 
         const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR)
 
+        const defaultPictureUrl = "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+        const userPicture = picture || defaultPictureUrl;
+
         const result = await db.query(
             `INSERT INTO users
             (username,
@@ -82,7 +86,7 @@ class User {
                 firstName, 
                 lastName, 
                 birthday,
-                picture
+                userPicture
             ]
         )
 
@@ -152,8 +156,29 @@ class User {
 
         return user; 
     }
+    
+    /** Verify user's password
+     * Returns true if password is correct, false otherwise
+     */
 
-    /** Update user data with `data`.
+    static async verifyPassword(username, password) {
+        const result = await db.query(
+            `SELECT hashed_password
+                FROM users
+                WHERE username = $1`,
+            [username]
+        );
+    
+        const user = result.rows[0];
+    
+        if (user) {
+            return await bcrypt.compare(password, user.hashed_password);
+        }
+    
+        return false;
+    }
+
+        /** Update user data with `data`.
      *
      * This is a "partial update" --- it's fine if data doesn't contain
      * all the fields; this only changes provided ones.
@@ -169,9 +194,11 @@ class User {
      * Callers of this function must be certain they have validated inputs to this
      * or serious security risks can be opened.
      */
+
     static async update(username, data) {
-        if (data.password) {
-          data.hashed_password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
+        if (data.newPassword) {
+          data.hashed_password = await bcrypt.hash(data.newPassword, BCRYPT_WORK_FACTOR);
+          delete data.newPassword;
         }
     
         const { setCols, values } = sqlForPartialUpdate(

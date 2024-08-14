@@ -1,7 +1,7 @@
 /** Routes for users. */
 
 const express = require("express");
-const {BadRequestError} = require("../expressError");
+const {BadRequestError, UnauthorizedError} = require("../expressError");
 const User = require("../models/user");
 const Comment = require("../models/comment");
 const Follow = require("../models/follow");
@@ -20,8 +20,8 @@ const router = express.Router();
 
 router.post('/register', async (req, res, next) => {
     try{
-        const {username, password, firstName, lastName, birthday, email} = req.body;
-        const user = await User.register({username, password, firstName, lastName, birthday, email});
+        const {username, password, firstName, lastName, birthday, email, picture} = req.body;
+        const user = await User.register({username, password, firstName, lastName, birthday, email, picture});
         const token = User.generateToken(user);
         return res.status(201).json({user, token})
     } catch(e){
@@ -70,7 +70,7 @@ router.get('/search', async(req, res, next) => {
  * Authorization required: friend or same user-as-:username
  **/
 
-router.get('/:username', async (req, res, next) => {
+router.get('/:username', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
     try{
         const username = req.params.username;
         const user = await User.get(username);
@@ -79,6 +79,24 @@ router.get('/:username', async (req, res, next) => {
         return next(e);
     }
 })
+
+/** POST /[username]/verify-password  => { isValid: boolean }
+ *
+ * Verifies the user's password
+ * 
+ * Authorization required: same-user-as-:username
+ **/
+
+router.post('/:username/verify-password', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async (req, res, next) => {
+    try {
+        const { username } = req.params;
+        const { password } = req.body;
+        const isValid = await User.verifyPassword(username, password);
+        return res.json({ isValid });
+    } catch (e) {
+        return next(e);
+    }
+});
 
 /** PATCH /[username] { user } => { user }
  *
@@ -90,10 +108,19 @@ router.get('/:username', async (req, res, next) => {
  * Authorization required: same-user-as-:username
  **/
 
-router.patch('/:username', async (req, res, next) => {
+router.patch('/:username', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async (req, res, next) => {
     try{
         const username = req.params.username;
         const data = req.body;
+
+        if(data.newPassword){
+            const isValid = await User.verifyPassword(username, data.currentPassword);
+            if(!isValid){
+                throw new UnauthorizedError("Current password not correct.")
+            }
+            delete data.currentPassword;
+        }
+
         const user = await User.update(username, data)
 
         if(!user){
@@ -150,7 +177,7 @@ router.get('/:username/comments', async(req, res, next)=> {
  *
  **/
 
-router.post('/:username/follow', async(req, res, next) => {
+router.post('/:username/follow', authenticateJWT, ensureLoggedIn, async(req, res, next) => {
     try{
         const followedUsername = req.params.username; 
         const followerUsername = req.user.username;
@@ -176,7 +203,7 @@ router.post('/:username/follow', async(req, res, next) => {
  *
  **/
 
-router.get('/:username/followers', async(req, res, next) => {
+router.get('/:username/followers', authenticateJWT, ensureLoggedIn, async(req, res, next) => {
     try{
         const username = req.params.username;
         const followers = await Follow.findUserFollowers(username);
@@ -196,7 +223,7 @@ router.get('/:username/followers', async(req, res, next) => {
  *  { follower: [ {id, username, firstName, lastName, followerSince}, ... ] }
  *
  **/
-router.get('/:username/following', async(req, res, next) => {
+router.get('/:username/following', authenticateJWT, ensureLoggedIn, async(req, res, next) => {
     try{
         const username = req.params.username;
         const following = await Follow.findUserFollowing(username);
@@ -215,7 +242,7 @@ router.get('/:username/following', async(req, res, next) => {
  *
  **/
 
-router.delete('/:username/follow', async( req, res, next ) => {
+router.delete('/:username/follow', authenticateJWT, ensureLoggedIn, async( req, res, next ) => {
     try{
         const followedUsername = req.params.username;
         const followerUsername = req.user.username;

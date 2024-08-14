@@ -31,7 +31,7 @@ router.post('/add', authenticateJWT, ensureLoggedIn, async(req, res,  next) => {
 
 /** edit a review */
 
-router.patch('/:reviewId', async (req, res, next) => {
+router.patch('/:reviewId', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
     try{
         const reviewId = req.params.reviewId;
         const {rating, title, body} = req.body;
@@ -47,7 +47,7 @@ router.patch('/:reviewId', async (req, res, next) => {
 });
 
 /** Delete a review */
-router.delete('/:reviewId', async(req, res, next) => {
+router.delete('/:reviewId', authenticateJWT, ensureLoggedIn, async(req, res, next) => {
     try {
         const reviewId = req.params.reviewId;
         const deletedReview = await Review.removeReview(reviewId);
@@ -62,7 +62,7 @@ router.delete('/:reviewId', async(req, res, next) => {
 });
 
 /** Get review by id */
-router.get('/:reviewId', async(req, res, next) => {
+router.get('/:reviewId', authenticateJWT, ensureLoggedIn, async(req, res, next) => {
     try{
         const reviewId = req.params.reviewId;
         const currentUser = req.user;
@@ -81,7 +81,7 @@ router.get('/:reviewId', async(req, res, next) => {
 })
 
 /** Find all reviews made by a specific user */
-router.get('/user/:username', async(req, res, next)=> {
+router.get('/user/:username', authenticateJWT, ensureLoggedIn, async(req, res, next)=> {
     try{
         const username = req.params.username;
         const reviews = await Review.findUserReviews(username);
@@ -110,7 +110,7 @@ router.get('/movie/:movie_imdb_id', async (req, res, next) => {
 
 /** Add a comment */
 
-router.post('/:reviewId/comments/add', async(req, res,  next) => {
+router.post('/:reviewId/comments/add', authenticateJWT, ensureLoggedIn, async(req, res,  next) => {
     try{
         const {body} = req.body;
         const {reviewId} = req.params
@@ -130,7 +130,7 @@ router.post('/:reviewId/comments/add', async(req, res,  next) => {
 
 /** Edit a comment */
 
-router.patch('/:reviewId/comments/:commentId', async (req, res, next) => {
+router.patch('/:reviewId/comments/:commentId', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async (req, res, next) => {
     try{
         const { reviewId, commentId } = req.params;
         const data = req.body;
@@ -146,7 +146,7 @@ router.patch('/:reviewId/comments/:commentId', async (req, res, next) => {
 
 /** Delete a comment */
 
-router.delete('/:reviewId/comments/:commentId', async(req, res, next) => {
+router.delete('/:reviewId/comments/:commentId', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async(req, res, next) => {
     try {
         const commentId = req.params.commentId;
         const deletedComment = await Comment.removeComment(commentId);
@@ -185,7 +185,7 @@ router.get('/:reviewId/comments', async(req, res, next)=> {
 
 /** Adds a new like to a review. **/
 
-router.post('/:reviewId/like',  async(req, res, next) => {
+router.post('/:reviewId/like', authenticateJWT, ensureLoggedIn,  async(req, res, next) => {
     try{
         const username = req.user.username;
         const reviewId = req.params.reviewId;
@@ -200,7 +200,7 @@ router.post('/:reviewId/like',  async(req, res, next) => {
 
 /** Removes a like from a review */
 
-router.delete('/:reviewId/like', async( req, res, next ) => {
+router.delete('/:reviewId/like', authenticateJWT, ensureLoggedIn, async( req, res, next ) => {
     try{
         const username = req.user.username;
         const reviewId = req.params.reviewId;
@@ -213,7 +213,7 @@ router.delete('/:reviewId/like', async( req, res, next ) => {
 
 /** Get Feed of reviews from users followed */
 
-router.get('/feed/:username', async(req, res, next)=> {
+router.get('/feed/:username', authenticateJWT, ensureLoggedIn, ensureCorrectUser, async(req, res, next)=> {
     try{
         const username = req.params.username;
         const feed = await Review.getFeedForUser(username);
