@@ -32,11 +32,16 @@ class User {
         
         
         const user = result.rows[0];
+        console.log(`User found:`, user ? 'Yes' : 'No');
 
-        if (user && await bcrypt.compare(password, user.hashed_password)) {
-            delete user.hashed_password;
-            const token = User.generateToken(user)
-            return {user, token};
+        if (user) {
+            const isValid = await bcrypt.compare(password, user.hashed_password);
+            console.log(`Password valid:`, isValid);
+            if (isValid) {
+                delete user.hashed_password;
+                const token = User.generateToken(user);
+                return {user, token};
+            }
         }
 
         throw new UnauthorizedError("Invalid username/password")

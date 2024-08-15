@@ -33,23 +33,8 @@ function authenticateJWT(req, res, next) {
     }
   }
 
-  function ensureCorrectUser(req, res, next) {
-    try {
-      if (!req.user) throw new UnauthorizedError("Authentication required");
-      
-      const user = req.user;
-      if (!user) throw new UnauthorizedError("Authentication required");
-      if (user.username !== req.params.username) {
-          throw new UnauthorizedError("Unauthorized");
-      }
-      return next();
-    } catch (e) {
-        return next(e);
-    }
-}
   
   module.exports = {
     authenticateJWT,
-    ensureLoggedIn,
-    ensureCorrectUser
+    ensureLoggedIn
   }

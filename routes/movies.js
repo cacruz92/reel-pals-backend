@@ -1,5 +1,6 @@
 const express = require("express");
-const Movie = require("../models/movie")
+const Movie = require("../models/movie");
+const { BadRequestError } = require("../expressError")
 
 const router = express.Router();
 
@@ -19,6 +20,12 @@ router.post('/add', async(req, res, next) => {
             Genre, Plot, Poster, Rated, Ratings, Released, 
             Runtime, Writer
         } = req.body;
+
+        
+        // Check for required fields
+        if (!imdbID || !Title || !Year) {
+            throw new BadRequestError("Missing required fields: imdbID, Title, and Year are required");
+        }        
 
         //separate the actors and genres into individual columns
         const actors = Actors.split(', ')

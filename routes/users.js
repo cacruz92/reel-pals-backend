@@ -186,10 +186,7 @@ router.post('/:username/follow', authenticateJWT, ensureLoggedIn, async(req, res
     try{
         const followedUsername = req.params.username; 
         const followerUsername = req.user.username;
-        const existingFollow = await Follow.findFollow(followerUsername, followedUsername);
-        if (existingFollow) {
-            return res.status(400).json({ error: "Already following this user" });
-        }
+        
         const newFollow = await Follow.followUser(followerUsername, followedUsername);
         return res.status(201).json({follow: newFollow})  
     } catch(e){

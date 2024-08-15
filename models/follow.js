@@ -53,7 +53,7 @@ class Follow {
             const followers = result.rows;
 
             if(followers.length === 0){
-                throw new NotFoundError(`No followers found for user: ${username}`);
+                return [];
             }
             return followers;
         } catch (e){
